@@ -26,9 +26,12 @@ public class Constants {
 
         public static final double kEncoderOffset = 0;
 
-        public static final double kP = 0; //2.82;
-        public static final double kI = 0;
-        public static final double kD = 0;
+        public static final double kP = 0.6136363636;//0.68181818181; //0.7090909091; //0.68181818181; //2.82;
+        public static final double kI = 0.005809090909; //0.010594584;//0.0108108;//0.005809090909;
+        public static final double kD = 0; //0.225;
+
+        // Ku = 1.5
+        // Tu = 64.0204865625 * 0.028116
     }
 
     /**

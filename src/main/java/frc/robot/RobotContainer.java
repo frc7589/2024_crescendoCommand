@@ -28,6 +28,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.XboxControllerConstants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ConveryorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.swerve.SwerveDriveSubsystem;
 import frc.robot.utils.OpzXboxController;
@@ -39,18 +40,20 @@ import frc.robot.utils.OpzXboxController;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private final SwerveDriveSubsystem m_drive = new SwerveDriveSubsystem();
-  private final ArmSubsystem m_arm = new ArmSubsystem();
-  private final ConveryorSubsystem m_converyor = new ConveryorSubsystem();
-  private final PhotonSubsystem photonSubsystem = new PhotonSubsystem();
+  //private final SwerveDriveSubsystem m_drive = new SwerveDriveSubsystem();
+  private final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+  //private final ConveryorSubsystem m_converyor = new ConveryorSubsystem();
+  //private final PhotonSubsystem photonSubsystem = new PhotonSubsystem();
 
+  /*
   private final OpzXboxController con_drive = new OpzXboxController(
     XboxControllerConstants.kDriveControllerID,
     XboxControllerConstants.kControllerMinValue
   );
+   */
 
   private final OpzXboxController con_util =  new OpzXboxController(
-    XboxControllerConstants.kUtilControllerID,
+    0,
     XboxControllerConstants.kControllerMinValue
   );
 
@@ -59,13 +62,13 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
+    /* 
     m_drive.setDefaultCommand(Commands.run(() -> m_drive.drive(
       con_drive.getLeftY(),
       con_drive.getLeftX(),
       con_drive.getRightX()
     ), m_drive));
-
-    m_arm.setPosition(0);
+    */
   }
 
   /**
@@ -81,13 +84,20 @@ public class RobotContainer {
     // Add a button to run the example auto to SmartDashboard, this will also be in the auto chooser built above
     //mController.start().onTrue(Commands.runOnce(() -> {mSwerve.reset()}, mSwerve));
 
+    /*
     con_drive.start().onTrue(m_drive.reset());
     con_drive.rightBumper().onTrue(m_drive.increaseMaxOutput());
     con_drive.leftBumper().onTrue(m_drive.decreaseMaxOutput());
 
     con_drive.leftTrigger(0.5).onTrue(m_drive.setMaxOutput(0.5));
     con_drive.rightTrigger(0.5).onTrue(m_drive.setMaxOutput(0.8));
+     */
 
+    con_util.povUp().onTrue(m_elevator.setPosision(2.4));
+    con_util.povLeft().onTrue(m_elevator.setPosision(1.15));
+    con_util.povDown().onTrue(m_elevator.setPosision(0));
+
+    /*
     con_util.povUp().onTrue(Commands.runOnce(() -> m_arm.setPosition(0.235), m_arm));
     con_util.povDown().onTrue(Commands.runOnce(() -> m_arm.setPosition(0.003), m_arm));
     con_util.povLeft().onTrue(Commands.runOnce(() -> m_arm.setPosition(0.055), m_arm));
@@ -99,6 +109,8 @@ public class RobotContainer {
           () -> m_arm.setPosition(m_arm.getSetpoint()-con_util.getLeftY()*0.0005),
           m_arm
         ));
+     */
+    
   }
 
   /**
@@ -112,6 +124,6 @@ public class RobotContainer {
   }
 
   public void setPose(Pose2d pose) {
-    m_drive.setPose(pose);
+   // m_drive.setPose(pose);
   }
 }
