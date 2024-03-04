@@ -4,32 +4,19 @@
 
 package frc.robot;
 
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathPlannerPath;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.net.PortForwarder;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Axis;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.XboxControllerConstants;
-import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ConveryorSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.PhotonSubsystem;
+import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.swerve.SwerveDriveSubsystem;
 import frc.robot.utils.OpzXboxController;
 
@@ -40,20 +27,20 @@ import frc.robot.utils.OpzXboxController;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  //private final SwerveDriveSubsystem m_drive = new SwerveDriveSubsystem();
+  private final SwerveDriveSubsystem m_drive = new SwerveDriveSubsystem();
   private final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
-  //private final ConveryorSubsystem m_converyor = new ConveryorSubsystem();
+  private final WristSubsystem m_wrist = new WristSubsystem();
+  private final IntakeSubsystem m_intake = new IntakeSubsystem();
+  private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   //private final PhotonSubsystem photonSubsystem = new PhotonSubsystem();
 
-  /*
   private final OpzXboxController con_drive = new OpzXboxController(
     XboxControllerConstants.kDriveControllerID,
     XboxControllerConstants.kControllerMinValue
   );
-   */
 
   private final OpzXboxController con_util =  new OpzXboxController(
-    0,
+    XboxControllerConstants.kUtilControllerID,
     XboxControllerConstants.kControllerMinValue
   );
 
@@ -62,13 +49,13 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
-    /* 
     m_drive.setDefaultCommand(Commands.run(() -> m_drive.drive(
       con_drive.getLeftY(),
       con_drive.getLeftX(),
       con_drive.getRightX()
     ), m_drive));
-    */
+
+    //m_elevator.setDefaultCommand(Commands.run(() -> m_elevator.test(con_util.getLeftY()), m_elevator));
   }
 
   /**
@@ -84,18 +71,39 @@ public class RobotContainer {
     // Add a button to run the example auto to SmartDashboard, this will also be in the auto chooser built above
     //mController.start().onTrue(Commands.runOnce(() -> {mSwerve.reset()}, mSwerve));
 
-    /*
     con_drive.start().onTrue(m_drive.reset());
     con_drive.rightBumper().onTrue(m_drive.increaseMaxOutput());
     con_drive.leftBumper().onTrue(m_drive.decreaseMaxOutput());
 
     con_drive.leftTrigger(0.5).onTrue(m_drive.setMaxOutput(0.5));
     con_drive.rightTrigger(0.5).onTrue(m_drive.setMaxOutput(0.8));
-     */
 
-    con_util.povUp().onTrue(m_elevator.setPosision(2.4));
-    con_util.povLeft().onTrue(m_elevator.setPosision(1.15));
-    con_util.povDown().onTrue(m_elevator.setPosision(0));
+    //con_util.a().onTrue(Commands.runOnce(() -> m_elevator.setPosision(SmartDashboard.getNumber("ele_height", 0)), m_elevator));
+    //con_util.b().onTrue(Commands.runOnce(() -> m_wrist.setPosision(SmartDashboard.getNumber("wrist", 0)), m_wrist));
+
+    con_util.povUp().onTrue(Commands.parallel(
+      m_elevator.setPosisionBySD(),
+      m_wrist.setPosisionBySD()
+    ));
+    con_util.povLeft().onTrue(Commands.parallel(
+      m_elevator.setPosision(2.0),
+      m_wrist.setPosisionBySD()
+    ));
+    con_util.povDown().onTrue(Commands.parallel(
+      m_elevator.setPosision(0),
+      m_wrist.setPosision(0.03)
+    ));
+
+    con_util.leftBumper().onTrue(m_wrist.setPosision(0.26));
+
+    con_util.a().whileTrue(m_shooter.shooterCommand(true));
+    con_util.b().whileTrue(m_shooter.shooterCommand(false));
+    con_util.x().whileTrue(m_intake.intakeCommand(true));
+    con_util.y().whileTrue(m_intake.intakeCommand(false));
+
+    /* 
+    con_util.axisGreaterThan(Axis.kLeftY.value, 0.2).whileTrue(m_elevator.setPosision(m_elevator.getSetpoint()-con_util.getLeftY()*0.0005));
+    */
 
     /*
     con_util.povUp().onTrue(Commands.runOnce(() -> m_arm.setPosition(0.235), m_arm));

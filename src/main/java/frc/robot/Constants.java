@@ -19,6 +19,18 @@ public class Constants {
 
     public static final Transform3d kRobotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0)); 
 
+    public static class WristConstants {
+        public static final int kMotorID = 49;
+
+        public static final int kEncoderID = 1;
+
+        public static final double kEncoderOffset = 0.725;
+
+        public static final double kP = 3.1040454545;//3.04318181817//0.68181818181; //0.7090909091; //0.68181818181; //2.82;
+        public static final double kI = 0.004213636364; //0.010594584;//0.0108108;//0.005809090909;
+        public static final double kD = 0; //0.225;
+    }
+
     public static class ElevatorConstants {
         public static final int kLeftMotorID = 53;
         public static final int kRightMotorID = 48;
@@ -26,9 +38,9 @@ public class Constants {
 
         public static final double kEncoderOffset = 0;
 
-        public static final double kP = 0.6136363636;//0.68181818181; //0.7090909091; //0.68181818181; //2.82;
-        public static final double kI = 0.005809090909; //0.010594584;//0.0108108;//0.005809090909;
-        public static final double kD = 0; //0.225;
+        public static final double kP = 5.06545454546;//5.09090909091;//11.2;//0.42;//0.94185;//0.68181818181; //0.7090909091; //0.68181818181; //2.82;
+        public static final double kI = 0.05325090909; //0.05549090909;//0;//0.0005; //0.010594584;//0.0108108;//0.005809090909;
+        public static final double kD = 0;//0; //0.225;
 
         // Ku = 1.5
         // Tu = 64.0204865625 * 0.028116
@@ -40,7 +52,7 @@ public class Constants {
     public static class ArmConstants {
         public static final int kLeftMotorID = 48;
         public static final int kRightMotorID = 43;
-        public static final int kEncoderID = 0;
+        public static final int kEncoderID = 2;
 
         public static double kEncoderOffset = 0.6135;//0.115;
 
@@ -65,20 +77,20 @@ public class Constants {
      * Conveyor 配置常數
      */
     public static class ConveyorConstants {
-        public static final int kIntakeMotorID = 51;
-        public static final int kShooterLeftMotorID = 45;
-        public static final int kShooterRightMotorID = 52;
+        public static final int kIntakeMotorID = 46;
+        public static final int kShooterLeftMotorID = 44;
+        public static final int kShooterRightMotorID = 50;
 
         public static final double kShooterOutput = 0.6;
         public static final double kIntakeOutput = 0.3;
 
-        public static final double kShooterSpeed = 3300;
+        public static final double kShooterSpeed = 2000;
         public static final double kShooterRadius = 5.08; // unit: centimeter
 
         public static final double kMinIntakePausepoint = 76;
 
-        public static final double kShooterRightGearRatio = 0.93;
-        public static final double kShooterLeftGearRatio = 0.67;
+        public static final double kShooterRightGearRatio = 28/30;
+        public static final double kShooterLeftGearRatio = 24/16;
     }
 
     /**

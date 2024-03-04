@@ -40,14 +40,16 @@ public class ElevatorSubsystem extends SubsystemBase {
         m_leftMotor.setIdleMode(IdleMode.kBrake);
         m_rightMotor.setIdleMode(IdleMode.kBrake);
 
-        m_leftMotor.setInverted(true);
-        m_rightMotor.setInverted(false);
+        m_leftMotor.setInverted(false);
+        m_rightMotor.setInverted(true);
 
         m_leftMotor.enableVoltageCompensation(Constants.kVoltageCompensation);
         m_rightMotor.enableVoltageCompensation(Constants.kVoltageCompensation);
 
         m_encoder.reset();
         pidController.setSetpoint(0);
+
+        SmartDashboard.putNumber("ele", 2.0);
     }
 
     public double getPosistion() {
@@ -63,18 +65,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("length", this.getPosistion());
-
-        /*
-        pidController.setPID(
-            SmartDashboard.getNumber("kP", 0),
-            SmartDashboard.getNumber("kI", 0),
-            SmartDashboard.getNumber("kD", 0)
-        );
-         */
+        SmartDashboard.putBoolean("conn", m_encoder.isConnected());
 
         if(RobotState.isEnabled()) {
             double out = pidController.calculate(this.getPosistion());
-            SmartDashboard.putNumber("out", out);
             m_leftMotor.set(out);
             m_rightMotor.set(out);
         }
@@ -86,6 +80,17 @@ public class ElevatorSubsystem extends SubsystemBase {
             pidController.setSetpoint(setpoint);
         });
     }
+
+
+    public Command setPosisionBySD() {
+        return runOnce(() -> {
+            double setpoint = SmartDashboard.getNumber("ele", 2.0);
+            if(setpoint > 2.45 || setpoint < -0.05) return;
+            pidController.setSetpoint(setpoint);
+        });
+    }
+
+    
 
     public double getSetpoint() {
         return pidController.getSetpoint();
