@@ -48,7 +48,7 @@ public class Constants {
         public static final double kI = 0.0895;
         public static final double kD = 0.001;
 
-        public static final double kInitialAngle = 62; // unit: radius
+        public static final double kInitialAngle = 62;
 
         public static final double kSpeakerShootingMaxHeight = 1.9; // unit: meter
 
