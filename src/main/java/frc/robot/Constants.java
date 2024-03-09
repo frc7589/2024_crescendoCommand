@@ -139,11 +139,11 @@ public class Constants {
         /**
          * 移動PID參數配置
          */
-        public static final double kPath_kP = 5;//0.0095; //0.0085277;//0.008338;
+        public static final double kPath_kP = 8;//0.0095; //0.0085277;//0.008338;
         public static final double kPath_kI = 0;//0.00048; //0.000552; //0.0004545;
         public static final double kPath_kD = 0; //0.000011;
 
-        public static final double kPathZ_kP = 5;//0.0095; //0.0085277;//0.008338;
+        public static final double kPathZ_kP = 3;//0.0095; //0.0085277;//0.008338;
         public static final double kPathZ_kI = 0;//0.00048; //0.000552; //0.0004545;
         public static final double kPathZ_kD = 0; //0.000011;
 
