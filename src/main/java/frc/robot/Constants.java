@@ -19,16 +19,8 @@ public class Constants {
 
     public static final Transform3d kRobotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0)); 
 
-    public static class ElevatorConstants {
-        public static final int kLeftMotorID = 53;
-        public static final int kRightMotorID = 48;
-        public static final int kEncoderID = 0;
-
-        public static final double kEncoderOffset = 0;
-
-        public static final double kP = 0; //2.82;
-        public static final double kI = 0;
-        public static final double kD = 0;
+    public static class TelescopeConstants {
+        public static final int kMotorID = 53;
     }
 
     /**
@@ -36,17 +28,17 @@ public class Constants {
      */
     public static class ArmConstants {
         public static final int kLeftMotorID = 48;
-        public static final int kRightMotorID = 43;
+        public static final int kRightMotorID = 53;
         public static final int kEncoderID = 0;
 
-        public static double kEncoderOffset = 0.6135;//0.115;
+        public static double kEncoderOffset = 0.6135+0.0829;//0.115;
 
         public static double kMaxAngle = 0.4;
         public static double kMinAngle = 0;
 
-        public static final double kP = 3.0001; //2.82;
-        public static final double kI = 0.0895;
-        public static final double kD = 0.001;
+        public static final double kP = 3.9545454545; //2.82;
+        public static final double kI = 0.06548727273;
+        public static final double kD = 0;
 
         public static final double kInitialAngle = 62;
 
@@ -73,9 +65,6 @@ public class Constants {
         public static final double kShooterRadius = 5.08; // unit: centimeter
 
         public static final double kMinIntakePausepoint = 76;
-
-        public static final double kShooterRightGearRatio = 0.93;
-        public static final double kShooterLeftGearRatio = 0.67;
     }
 
     /**

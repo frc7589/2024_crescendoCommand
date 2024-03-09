@@ -2,15 +2,22 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.7350619314586089,
-      "y": 5.738640786956715
+      "x": 2.7119896356671247,
+      "y": 6.85441907518702
     },
     "rotation": -0.6171698826616585
   },
   "command": {
     "type": "sequential",
     "data": {
-      "commands": []
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score Path"
+          }
+        }
+      ]
     }
   },
   "folder": null,

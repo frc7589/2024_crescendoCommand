@@ -58,7 +58,8 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public double getPosistion() {
-        return m_encoder.get() < -0.4 ? (1+(m_encoder.get()%1)) : m_encoder.get()%1;
+        double v = -m_encoder.get();
+        return (v < -0.4 ? (1+(v%1)) : v%1);
     }
 
     public void setPosition(double position) {
@@ -113,5 +114,7 @@ public class ArmSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("[Arm] Shooter Angle", getShooterAngle(this.getDegrees()));
         SmartDashboard.putBoolean("[Arm] Encoder Connection", m_encoder.isConnected());
         SmartDashboard.putBoolean("[Arm] On Setpoint", pidController.atSetpoint());
+
+        SmartDashboard.putNumber("[Arm] Output", m_leftMotor.get());
     }
 }

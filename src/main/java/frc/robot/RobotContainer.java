@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Axis;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -42,7 +43,7 @@ public class RobotContainer {
   private final SwerveDriveSubsystem m_drive = new SwerveDriveSubsystem();
   private final ArmSubsystem m_arm = new ArmSubsystem();
   private final ConveryorSubsystem m_converyor = new ConveryorSubsystem();
-  private final PhotonSubsystem photonSubsystem = new PhotonSubsystem();
+  //private final PhotonSubsystem photonSubsystem = new PhotonSubsystem();
 
   private final OpzXboxController con_drive = new OpzXboxController(
     XboxControllerConstants.kDriveControllerID,
@@ -58,7 +59,6 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
-
     m_drive.setDefaultCommand(Commands.run(() -> m_drive.drive(
       con_drive.getLeftY(),
       con_drive.getLeftX(),
@@ -80,7 +80,6 @@ public class RobotContainer {
   private void configureBindings() {
     // Add a button to run the example auto to SmartDashboard, this will also be in the auto chooser built above
     //mController.start().onTrue(Commands.runOnce(() -> {mSwerve.reset()}, mSwerve));
-
     con_drive.start().onTrue(m_drive.reset());
     con_drive.rightBumper().onTrue(m_drive.increaseMaxOutput());
     con_drive.leftBumper().onTrue(m_drive.decreaseMaxOutput());

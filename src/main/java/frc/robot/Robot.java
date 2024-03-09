@@ -65,8 +65,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    Pose2d startingPose = PathPlannerAuto.getStaringPoseFromAutoFile("Example Auto");
-    m_robotContainer.setPose(startingPose);
+    //Pose2d startingPose = PathPlannerAuto.getStaringPoseFromAutoFile("Example Auto");
+    //m_robotContainer.setPose(startingPose);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
