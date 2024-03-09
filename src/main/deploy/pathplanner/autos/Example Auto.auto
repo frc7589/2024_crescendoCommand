@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2.7119896356671247,
-      "y": 6.85441907518702
+      "x": 1.3489906888005865,
+      "y": 5.570313542639798
     },
     "rotation": -0.6171698826616585
   },
@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score Path"
+            "pathName": "[1,2] Shoot Path"
           }
         }
       ]
