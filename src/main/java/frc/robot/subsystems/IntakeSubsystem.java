@@ -52,7 +52,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public Command intakeCommand(boolean reverse) {
         return this.startEnd(
-            () -> m_intake.set((reverse ? -1 : 1)*ConveyorConstants.kIntakeOutput),
+            () -> m_intake.set((reverse ? -0.6 : 1)*ConveyorConstants.kIntakeOutput),
             () -> m_intake.set(0)
         );
     }

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.DataContainer;
 import frc.robot.Constants.SwerveDriveConstants;
 
 /** Swerve底盤 Class */
@@ -261,6 +262,12 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             getModulePositions()
         );
 
+        if(DataContainer.camPose != null) {
+            setPose(DataContainer.camPose.toPose2d());
+        }
+
+        DataContainer.pose2d = getPose();
+
         this.updateSmartDashboard();
     }
 
@@ -301,9 +308,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         });
         
         SmartDashboard.putNumberArray("[Chassis] Posistion", new double[] {
-            this.getPose().getX(),
-            this.getPose().getY(),
-            this.getPose().getRotation().getDegrees()
+            DataContainer.pose2d.getX(),
+            DataContainer.pose2d.getY(),
+            DataContainer.pose2d.getRotation().getDegrees()
         });
     }
 

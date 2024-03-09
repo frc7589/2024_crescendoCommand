@@ -17,10 +17,10 @@ import java.util.HashMap;
 /** 常數設定值 */
 public class Constants {
 
-    public static final Transform3d kRobotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0)); 
+    public static final Transform3d kRobotToCam = new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0,0,0)); 
 
-    public static class TelescopeConstants {
-        public static final int kMotorID = 53;
+    public static class LifterConstants {
+        public static final int kMotorID = 49;
     }
 
     /**
@@ -31,7 +31,7 @@ public class Constants {
         public static final int kRightMotorID = 53;
         public static final int kEncoderID = 0;
 
-        public static double kEncoderOffset = 0.6135+0.0829;//0.115;
+        public static double kEncoderOffset = 0.6135+0.081;//0.115;
 
         public static double kMaxAngle = 0.4;
         public static double kMinAngle = 0;
@@ -58,8 +58,8 @@ public class Constants {
         public static final int kShooterLeftMotorID = 45;
         public static final int kShooterRightMotorID = 52;
 
-        public static final double kShooterOutput = 0.6;
-        public static final double kIntakeOutput = 0.3;
+        public static final double kShooterOutput = 0.65;
+        public static final double kIntakeOutput = 0.5;
 
         public static final double kShooterSpeed = 3300;
         public static final double kShooterRadius = 5.08; // unit: centimeter

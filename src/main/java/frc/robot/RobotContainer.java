@@ -14,6 +14,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -29,7 +30,10 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.XboxControllerConstants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ConveryorSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LifterSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDriveSubsystem;
 import frc.robot.utils.OpzXboxController;
 
@@ -42,8 +46,10 @@ import frc.robot.utils.OpzXboxController;
 public class RobotContainer {
   private final SwerveDriveSubsystem m_drive = new SwerveDriveSubsystem();
   private final ArmSubsystem m_arm = new ArmSubsystem();
-  private final ConveryorSubsystem m_converyor = new ConveryorSubsystem();
-  //private final PhotonSubsystem photonSubsystem = new PhotonSubsystem();
+  private final IntakeSubsystem m_intake = new IntakeSubsystem();
+  private final ShooterSubsystem m_shooter = new ShooterSubsystem();
+  private final LifterSubsystem m_lifter = new LifterSubsystem();
+  private final PhotonSubsystem photonSubsystem = new PhotonSubsystem();
 
   private final OpzXboxController con_drive = new OpzXboxController(
     XboxControllerConstants.kDriveControllerID,
@@ -59,11 +65,16 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+
     m_drive.setDefaultCommand(Commands.run(() -> m_drive.drive(
       con_drive.getLeftY(),
       con_drive.getLeftX(),
       con_drive.getRightX()
     ), m_drive));
+
+    m_lifter.setDefaultCommand(Commands.run(() -> m_lifter.set(
+      con_util.getRightY()
+    ), m_lifter));
 
     m_arm.setPosition(0);
   }
@@ -90,6 +101,7 @@ public class RobotContainer {
     con_util.povUp().onTrue(Commands.runOnce(() -> m_arm.setPosition(0.235), m_arm));
     con_util.povDown().onTrue(Commands.runOnce(() -> m_arm.setPosition(0.003), m_arm));
     con_util.povLeft().onTrue(Commands.runOnce(() -> m_arm.setPosition(0.055), m_arm));
+    con_util.povRight().onTrue(m_arm.toogleAutoShooter());
 
     con_util.a().whileTrue(m_shooter.shooterCommand(true));
     con_util.b().whileTrue(m_shooter.shooterCommand(false));
