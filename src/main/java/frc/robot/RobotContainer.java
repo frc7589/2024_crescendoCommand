@@ -91,7 +91,10 @@ public class RobotContainer {
     con_util.povDown().onTrue(Commands.runOnce(() -> m_arm.setPosition(0.003), m_arm));
     con_util.povLeft().onTrue(Commands.runOnce(() -> m_arm.setPosition(0.055), m_arm));
 
-    con_util.y().whileTrue(m_converyor.intakeCommand());
+    con_util.a().whileTrue(m_shooter.shooterCommand(true));
+    con_util.b().whileTrue(m_shooter.shooterCommand(false));
+    con_util.x().whileTrue(m_intake.intakeCommand(true));
+    con_util.y().whileTrue(m_intake.intakeCommand(false));
 
     con_util.axisGreaterThan(Axis.kLeftY.value, 0.2)
       .whileTrue(Commands.runOnce(
