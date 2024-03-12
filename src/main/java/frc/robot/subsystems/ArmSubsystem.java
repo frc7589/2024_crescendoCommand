@@ -15,24 +15,20 @@ import frc.robot.DataContainer;
 import frc.robot.Constants.ArmConstants;
 
 public class ArmSubsystem extends SubsystemBase {
-    private CANSparkMax m_leftMotor, m_rightMotor;
+    private static final CANSparkMax m_leftMotor = new CANSparkMax(ArmConstants.kLeftMotorID, MotorType.kBrushless), 
+        m_rightMotor = new CANSparkMax(ArmConstants.kRightMotorID, MotorType.kBrushless);
 
-    private DutyCycleEncoder m_encoder;
+    private static final DutyCycleEncoder m_encoder = new DutyCycleEncoder(ArmConstants.kEncoderID);
     
     private PIDController pidController;
     private boolean autoShooterAngle = false;
 
     public ArmSubsystem() {
-        m_leftMotor = new CANSparkMax(ArmConstants.kLeftMotorID, MotorType.kBrushless);
-        m_rightMotor = new CANSparkMax(ArmConstants.kRightMotorID, MotorType.kBrushless);
-
-        m_encoder = new DutyCycleEncoder(ArmConstants.kEncoderID);
-
         m_encoder.setPositionOffset(ArmConstants.kEncoderOffset);
 
         pidController = new PIDController(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD);
 
-        pidController.setTolerance(0.03);
+        pidController.setTolerance(0.02);
 
         m_leftMotor.restoreFactoryDefaults();
         m_rightMotor.restoreFactoryDefaults();
@@ -65,18 +61,21 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void setPosition(double position) {
-        if(position > 0.31 || position < 0) return;
+        if(position > 0.5 || position < -0.1) return;
         else {
             pidController.setSetpoint(position);
         }
     }
 
-    public double getSetpoint() {
-        return pidController.getSetpoint();
+    public Command setPositionCommand(double position) {
+        return runOnce(() -> {
+            if(autoShooterAngle) setAutoShooterAngle(false);
+            setPosition(position);
+        });
     }
 
-    public void setAngleForSpeaker(double distance) {
-        this.setPosition((11.477*Math.log(distance) + 16.666)/360);
+    public double getSetpoint() {
+        return pidController.getSetpoint();
     }
 
     public double getHeight() {
@@ -91,9 +90,12 @@ public class ArmSubsystem extends SubsystemBase {
     public void periodic() {
         this.updateSmartDashboard();
         if(RobotState.isDisabled()) return;
+        SmartDashboard.putNumberArray("arm_pos", DataContainer.pose2d != null ? new double[]{DataContainer.pose2d.getX(), DataContainer.pose2d.getY()} : new double[]{});
         if(autoShooterAngle) setPosition(calculateAngle(DataContainer.getDistanceToSpeaker(DataContainer.pose2d.getX(), DataContainer.pose2d.getY())));
-        m_leftMotor.set(pidController.calculate(this.getPosistion()));
-        m_rightMotor.set(pidController.calculate(this.getPosistion()));
+        
+        double out = pidController.calculate(this.getPosistion());
+        m_leftMotor.set(out);
+        m_rightMotor.set(out);
     }
 
     public boolean onPoint() {
@@ -111,6 +113,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     public double getShooterAngle(double armAngle) {
         return ArmConstants.kInitialAngle - armAngle;
+    }
+
+    public void setAutoShooterAngle(boolean mode) {
+        autoShooterAngle = mode;
     }
 
     public Command toogleAutoShooter() {

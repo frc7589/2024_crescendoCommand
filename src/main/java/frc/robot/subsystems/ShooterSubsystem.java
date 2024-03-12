@@ -32,17 +32,17 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumberArray("speeds", getShooterSpeed());
     }
 
-    public void setSpeed(double output) {
+    public void setOutput(double output) {
         m_shooterLeft.set(output);
         m_shooterRight.set(output);
     }
 
     public Command shooterCommand(boolean reverse) {
         return this.startEnd(
-            () -> setSpeed((reverse ? -1 : 1)*ConveyorConstants.kShooterOutput),
-            () -> setSpeed(0)
+            () -> setOutput((reverse ? -1 : 1)*ConveyorConstants.kShooterOutput),
+            () -> setOutput(0)
         );
-    }
+    } 
 
     public double[] getShooterSpeed() {
         return new double[] {

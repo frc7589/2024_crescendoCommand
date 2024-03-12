@@ -68,12 +68,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     public SwerveDriveSubsystem() {
         mOdometry = new SwerveDriveOdometry(
             SwerveDriveConstants.kSwerveKinematics, 
-            Rotation2d.fromDegrees(m_ahrs.getAngle()),
+            Rotation2d.fromDegrees(-m_ahrs.getAngle()),
             getModulePositions()
         );
 
         poseEstimator = new SwerveDrivePoseEstimator(SwerveDriveConstants.kSwerveKinematics, Rotation2d.fromDegrees(m_ahrs.getAngle()), getModulePositions(), getPose());
-
         AutoBuilder.configureHolonomic(
             this::getPose,
             this::setPose,
@@ -89,10 +88,15 @@ public class SwerveDriveSubsystem extends SubsystemBase {
               if (alliance.isPresent()) {
                 return alliance.get() == DriverStation.Alliance.Red;
               }
+
               return false;
             },
             this
         );
+
+        SmartDashboard.putNumber("kP", SwerveDriveConstants.kRotor_kP);
+        SmartDashboard.putNumber("kI", SwerveDriveConstants.kRotor_kI);
+        SmartDashboard.putNumber("kD", SwerveDriveConstants.kRotor_kD);
     }
 
     /**
@@ -151,9 +155,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     public void driveField(double xSpeed, double ySpeed, double zSpeed) {
         SwerveModuleState[] states = SwerveDriveConstants.kSwerveKinematics.toSwerveModuleStates(
             ChassisSpeeds.fromFieldRelativeSpeeds(
-                -xSpeed,
-                -ySpeed,
-                -zSpeed,
+                xSpeed,
+                ySpeed,
+                zSpeed,
                 Rotation2d.fromDegrees(m_ahrs.getAngle())
             )
         );
@@ -170,9 +174,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     public void driveChassis(double xSpeed, double ySpeed, double zSpeed) {
         SwerveModuleState[] states = SwerveDriveConstants.kSwerveKinematics.toSwerveModuleStates(
             new ChassisSpeeds(
-                -xSpeed,
-                -ySpeed,
-                -zSpeed
+                xSpeed,
+                ySpeed,
+                zSpeed
             )
         );
 
@@ -181,8 +185,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     public void driveChassis(ChassisSpeeds speeds) {
         driveChassis(
-            speeds.vxMetersPerSecond,
-            speeds.vyMetersPerSecond,
+            -speeds.vxMetersPerSecond,
+            -speeds.vyMetersPerSecond,
             speeds.omegaRadiansPerSecond
         );
     }
@@ -191,6 +195,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     public ChassisSpeeds getSpeeds() {
         return SwerveDriveConstants.kSwerveKinematics.toChassisSpeeds(getModuleStates());
     }
+
     /**
      * 取得各模組狀態
      * @return 模組狀態的陣列
@@ -244,7 +249,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
      */
     public void setPose(Pose2d pose) {
         mOdometry.resetPosition(
-            Rotation2d.fromDegrees(m_ahrs.getAngle()),
+            Rotation2d.fromDegrees(-m_ahrs.getAngle()),
             getModulePositions(),
             pose
         );
@@ -259,15 +264,19 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         
         poseEstimator.update(Rotation2d.fromDegrees(m_ahrs.getAngle()), getModulePositions());
         mOdometry.update(
-            Rotation2d.fromDegrees(m_ahrs.getAngle()),
+            Rotation2d.fromDegrees(-m_ahrs.getAngle()),
             getModulePositions()
         );
 
-        if(DataContainer.camPose != null && !RobotState.isAutonomous()) {
-            setPose(DataContainer.camPose.toPose2d());
+        if(DataContainer.camPose != null) {
+            if(!RobotState.isAutonomous()) {
+                setPose(DataContainer.camPose.toPose2d());
+                DataContainer.pose2d = getPose();
+            }
         }
 
         DataContainer.pose2d = getPose();
+        
 
         this.updateSmartDashboard();
     }

@@ -17,7 +17,7 @@ import java.util.HashMap;
 /** 常數設定值 */
 public class Constants {
 
-    public static final Transform3d kRobotToCam = new Transform3d(new Translation3d(0.0, 0.0, 0.0), new Rotation3d(0,0,0)); 
+    public static final Transform3d kRobotToCam = new Transform3d(new Translation3d(-0.5, 0.5, 0.0), new Rotation3d(0,0,0)); 
 
     public static class LifterConstants {
         public static final int kMotorID = 49;
@@ -58,10 +58,10 @@ public class Constants {
         public static final int kShooterLeftMotorID = 45;
         public static final int kShooterRightMotorID = 52;
 
-        public static final double kShooterOutput = 0.65;
-        public static final double kIntakeOutput = 0.5;
+        public static final double kShooterOutput = 0.63;
+        public static final double kIntakeOutput = 0.4;
 
-        public static final double kShooterSpeed = 3300;
+        public static final double kShooterSpeed = 3400;
         public static final double kShooterRadius = 5.08; // unit: centimeter
 
         public static final double kMinIntakePausepoint = 76;
@@ -84,7 +84,7 @@ public class Constants {
             57,
             33,
             1,
-            -40.439+180
+            -42.6269
         );
         //----
         
@@ -93,7 +93,7 @@ public class Constants {
             61,
             62,
             2,
-            138.86+180
+            140.186-0.8789
         );
         //----
 
@@ -102,7 +102,7 @@ public class Constants {
             59,
             56,
             4,
-            -83.32+180
+            -82.6171+1.845
         );
 
         // RR(後右)模組常數
@@ -110,7 +110,7 @@ public class Constants {
             34,
             55,
             3,
-            -39.63+180
+            -39.551+0.04
         );
 
         /**
@@ -132,9 +132,9 @@ public class Constants {
         /**
          * 旋轉馬達控制器PID參數配置
          */
-        public static final double kRotor_kP = 0.01;//0.0095; //0.0085277;//0.008338;
-        public static final double kRotor_kI = 0.00005;//0.00048; //0.000552; //0.0004545;
-        public static final double kRotor_kD = 0.000058; //0.000011;
+        public static final double kRotor_kP = 0.008181818182;//0.0095; //0.0085277;//0.008338;
+        public static final double kRotor_kI = 0.0001374545455;//0.00048; //0.000552; //0.0004545;
+        public static final double kRotor_kD = 0; //0.000011;
 
         /**
          * 移動PID參數配置
@@ -143,7 +143,7 @@ public class Constants {
         public static final double kPath_kI = 0;//0.00048; //0.000552; //0.0004545;
         public static final double kPath_kD = 0; //0.000011;
 
-        public static final double kPathZ_kP = 3;//0.0095; //0.0085277;//0.008338;
+        public static final double kPathZ_kP = 1;//0.0095; //0.0085277;//0.008338;
         public static final double kPathZ_kI = 0;//0.00048; //0.000552; //0.0004545;
         public static final double kPathZ_kD = 0; //0.000011;
 
