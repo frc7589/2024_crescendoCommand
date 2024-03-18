@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
@@ -55,7 +56,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    //CommandScheduler.getInstance().cancelAll();
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -63,10 +66,14 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    m_robotContainer.setAutoSettings();
+
+    CommandScheduler.getInstance().cancelAll();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    Pose2d startingPose = PathPlannerAuto.getStaringPoseFromAutoFile("Example Auto");
+    Pose2d startingPose = PathPlannerAuto.getStaringPoseFromAutoFile(m_robotContainer.getAutoName());
     m_robotContainer.setPose(startingPose);
+    //m_robotContainer.resetFieldPositive();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

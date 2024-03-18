@@ -3,6 +3,7 @@ package frc.robot.subsystems.swerve;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.DataContainer;
 import frc.robot.Constants.SwerveDriveConstants;
 
 /** Swerve底盤 Class */
@@ -30,7 +32,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     private SwerveDriveOdometry mOdometry;
     private DriveMode mode = SwerveDriveConstants.kDefaultDriveMode;
     private double maxOutput = SwerveDriveConstants.kDefaultSpeed;
-    private SwerveDrivePoseEstimator poseEstimator;
+    private static SwerveDrivePoseEstimator poseEstimator;
+
+    private double headingOffset = 0;
 
     /** Swerve底盤 駕駛模式 */
     public static enum DriveMode {
@@ -50,7 +54,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     public static enum ControlMode {
         Manual("Manual"), 
-        Field("");
+        Field("Field");
 
         private String name;
 
@@ -70,7 +74,14 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             getModulePositions()
         );
 
-        poseEstimator = new SwerveDrivePoseEstimator(SwerveDriveConstants.kSwerveKinematics, Rotation2d.fromDegrees(m_ahrs.getAngle()), getModulePositions(), getPose());
+        poseEstimator = new SwerveDrivePoseEstimator(
+            SwerveDriveConstants.kSwerveKinematics,
+            Rotation2d.fromDegrees(m_ahrs.getAngle()),
+            getModulePositions(),
+            new Pose2d(),
+            VecBuilder.fill(0.3, 0.3, 0.8),
+            VecBuilder.fill(0.7, 0.7, 0.2)
+        );
 
         AutoBuilder.configureHolonomic(
             this::getPose,
@@ -87,6 +98,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
               if (alliance.isPresent()) {
                 return alliance.get() == DriverStation.Alliance.Red;
               }
+
               return false;
             },
             this
@@ -149,10 +161,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     public void driveField(double xSpeed, double ySpeed, double zSpeed) {
         SwerveModuleState[] states = SwerveDriveConstants.kSwerveKinematics.toSwerveModuleStates(
             ChassisSpeeds.fromFieldRelativeSpeeds(
-                -xSpeed,
-                -ySpeed,
-                -zSpeed,
-                Rotation2d.fromDegrees(m_ahrs.getAngle())
+                xSpeed,
+                ySpeed,
+                zSpeed,//Math.pow(15, zSpeed-1),
+                Rotation2d.fromDegrees(m_ahrs.getAngle()-headingOffset)
             )
         );
 
@@ -168,9 +180,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     public void driveChassis(double xSpeed, double ySpeed, double zSpeed) {
         SwerveModuleState[] states = SwerveDriveConstants.kSwerveKinematics.toSwerveModuleStates(
             new ChassisSpeeds(
-                -xSpeed,
-                -ySpeed,
-                -zSpeed
+                xSpeed,
+                ySpeed,
+                zSpeed
             )
         );
 
@@ -179,9 +191,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     public void driveChassis(ChassisSpeeds speeds) {
         driveChassis(
-            speeds.vxMetersPerSecond,
-            speeds.vyMetersPerSecond,
-            speeds.omegaRadiansPerSecond
+            -speeds.vxMetersPerSecond,
+            -speeds.vyMetersPerSecond,
+            -speeds.omegaRadiansPerSecond
         );
     }
     
@@ -189,6 +201,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     public ChassisSpeeds getSpeeds() {
         return SwerveDriveConstants.kSwerveKinematics.toChassisSpeeds(getModuleStates());
     }
+
     /**
      * 取得各模組狀態
      * @return 模組狀態的陣列
@@ -246,6 +259,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             getModulePositions(),
             pose
         );
+
+        poseEstimator.resetPosition(Rotation2d.fromDegrees(m_ahrs.getAngle()), getModulePositions(), pose);
     }
 
     /**
@@ -254,7 +269,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        
         poseEstimator.update(Rotation2d.fromDegrees(m_ahrs.getAngle()), getModulePositions());
         mOdometry.update(
             Rotation2d.fromDegrees(m_ahrs.getAngle()),
@@ -274,9 +288,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     /**
      * Reset
      */
-    public Command reset() {
+    public Command resetHeadingCommand() {
         return runOnce(() -> {
-            this.resetFieldPositive();
+            this.headingOffset = m_ahrs.getAngle();
         });
     }
 
@@ -301,16 +315,31 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         });
         
         SmartDashboard.putNumberArray("[Chassis] Posistion", new double[] {
-            this.getPose().getX(),
-            this.getPose().getY(),
-            this.getPose().getRotation().getDegrees()
+            DataContainer.pose2d.getX(),
+            DataContainer.pose2d.getY(),
+            DataContainer.pose2d.getRotation().getDegrees()
+        });
+
+        SmartDashboard.putNumberArray("[IMU] Velocitys", new double[] {
+            m_ahrs.getVelocityX(),
+            m_ahrs.getVelocityY(),
+            m_ahrs.getRate()
+        });
+
+        SmartDashboard.putNumberArray("[IMU] Accels", new double[] {
+            m_ahrs.getWorldLinearAccelX(),
+            m_ahrs.getWorldLinearAccelY()
         });
     }
 
-    public Command setMaxOutput(double value) {
+    public Command setMaxOutputCommand(double value) {
         return runOnce(() -> {
             this.maxOutput = value;
         });
+    }
+
+    public void setMaxOutput(double value) {
+        this.maxOutput = value;
     }
 
     public Command increaseMaxOutput() {
@@ -350,5 +379,13 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         m_frontRight.testRunning(throttle, rotor);
         m_rearLeft.testRunning(throttle, rotor);
         m_rearRight.testRunning(throttle, rotor);
+    }
+
+    public void addVisionMeasurement(Pose2d pose, double timestamp) {
+        poseEstimator.addVisionMeasurement(pose, timestamp);
+    }
+
+    public Pose2d getEstimatedPose() {
+        return poseEstimator.getEstimatedPosition();
     }
 }

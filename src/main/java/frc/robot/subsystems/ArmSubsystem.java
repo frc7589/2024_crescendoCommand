@@ -8,29 +8,28 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.DataContainer;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 
 public class ArmSubsystem extends SubsystemBase {
-    private CANSparkMax m_leftMotor, m_rightMotor;
-
-    private DutyCycleEncoder m_encoder;
-    
-    private PIDController pidController;
-    private double setpoint = 0;
-
-    public ArmSubsystem() {
-        m_leftMotor = new CANSparkMax(ArmConstants.kLeftMotorID, MotorType.kBrushless);
+    private static final CANSparkMax m_leftMotor = new CANSparkMax(ArmConstants.kLeftMotorID, MotorType.kBrushless), 
         m_rightMotor = new CANSparkMax(ArmConstants.kRightMotorID, MotorType.kBrushless);
 
-        m_encoder = new DutyCycleEncoder(ArmConstants.kEncoderID);
+    private static final DutyCycleEncoder m_encoder = new DutyCycleEncoder(ArmConstants.kEncoderID);
+    
+    private PIDController pidController;
+    private boolean autoShooterAngle = false;
 
+    public ArmSubsystem() {
         m_encoder.setPositionOffset(ArmConstants.kEncoderOffset);
 
         pidController = new PIDController(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD);
 
-        pidController.setTolerance(0.03);
+        pidController.setTolerance(0.02);
 
         m_leftMotor.restoreFactoryDefaults();
         m_rightMotor.restoreFactoryDefaults();
@@ -58,34 +57,45 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public double getPosistion() {
-        return m_encoder.get() < -0.4 ? (1+(m_encoder.get()%1)) : m_encoder.get()%1;
+        double v = -m_encoder.get();
+        return (v < -0.4 ? (1+(v%1)) : v%1);
     }
 
     public void setPosition(double position) {
-        if(position > 0.31 || position < 0) return;
+        if(position > 0.5 || position < -0.1) return;
         else {
-            this.setpoint = position;
+            pidController.setSetpoint(position);
         }
     }
 
-    public double getSetpoint() {
-        return this.setpoint;
+    public Command setPositionCommand(double position) {
+        return runOnce(() -> {
+            if(autoShooterAngle) setAutoShooterAngle(false);
+            setPosition(position);
+        });
     }
 
-    public void setAngleForSpeaker(double distance) {
-        this.setPosition((11.477*Math.log(distance) + 16.666)/360);
+    public double getSetpoint() {
+        return pidController.getSetpoint();
     }
 
     public double getHeight() {
         return ArmConstants.kInitialHeight+this.getAdditionHeight();
     }
 
+    public double calculateAngle(double x) {
+        return (11.477*Math.log(x) + 16.666)/360;
+    }
+
     @Override
     public void periodic() {
         this.updateSmartDashboard();
         if(RobotState.isDisabled()) return;
-        m_leftMotor.set(pidController.calculate(this.getPosistion(), setpoint));
-        m_rightMotor.set(pidController.calculate(this.getPosistion(), setpoint));
+        if(autoShooterAngle) setPosition(calculateAngle(DataContainer.getDistanceToSpeaker(RobotContainer.getPose().getX(), RobotContainer.getPose().getY())));
+        
+        double out = pidController.calculate(this.getPosistion());
+        m_leftMotor.set(pidController.calculate(this.getPosistion()));
+        m_rightMotor.set(out);
     }
 
     public boolean onPoint() {
@@ -105,13 +115,25 @@ public class ArmSubsystem extends SubsystemBase {
         return ArmConstants.kInitialAngle - armAngle;
     }
 
+    public void setAutoShooterAngle(boolean mode) {
+        autoShooterAngle = mode;
+    }
+
+    public Command toogleAutoShooter() {
+        return runOnce(() -> autoShooterAngle = !autoShooterAngle);
+    }
+
     public void updateSmartDashboard() {
         SmartDashboard.putNumber("[Arm] Current Height", ArmConstants.kInitialHeight+this.getAdditionHeight());
         SmartDashboard.putNumber("[Arm] Current Angle", this.getDegrees());
-        SmartDashboard.putNumber("[Arm] Setpoint Angle", this.setpoint*360);
+        SmartDashboard.putNumber("[Arm] Setpoint Angle", this.getSetpoint()*360);
         SmartDashboard.putNumber("[Arm] Encoder Value", this.getPosistion());
         SmartDashboard.putNumber("[Arm] Shooter Angle", getShooterAngle(this.getDegrees()));
         SmartDashboard.putBoolean("[Arm] Encoder Connection", m_encoder.isConnected());
         SmartDashboard.putBoolean("[Arm] On Setpoint", pidController.atSetpoint());
+
+        SmartDashboard.putBoolean("[Arm] Auto Angle", this.autoShooterAngle);
+
+        SmartDashboard.putNumber("[Arm] Output", m_leftMotor.get());
     }
 }

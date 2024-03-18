@@ -3,60 +3,66 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3489906888005865,
-        "y": 5.570313542639798
+        "x": 2.79857994901175,
+        "y": 6.931034198337109
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3271306483063596,
-        "y": 5.570313542639798
+        "x": 4.538536543197219,
+        "y": 7.399743772584562
       },
-      "isLocked": true,
-      "linkedName": null
+      "isLocked": false,
+      "linkedName": "[Blue AMPSide]Second End"
     },
     {
       "anchor": {
-        "x": 2.665721317494895,
-        "y": 5.342302905651009
+        "x": 8.086699428028485,
+        "y": 7.419781112710373
       },
       "prevControl": {
-        "x": 2.066021357635487,
-        "y": 5.342302905651009
+        "x": 8.053622329466881,
+        "y": 7.949786686610411
       },
       "nextControl": {
-        "x": 3.2654212773543025,
-        "y": 5.342302905651009
+        "x": 8.125469988064918,
+        "y": 6.798547273706478
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.8348830548296691,
-        "y": 6.735873620935094
+        "x": 3.6358559645983393,
+        "y": 6.444372284196397
       },
       "prevControl": {
-        "x": 1.095792564996147,
-        "y": 7.3722683285762045
+        "x": 4.693673050699653,
+        "y": 6.872417655297524
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 5.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.993226824742614,
-    "rotateFast": false
+    "rotation": 12.052463557740595,
+    "rotateFast": true
   },
   "reversed": false,
   "folder": null,

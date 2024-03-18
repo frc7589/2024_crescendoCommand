@@ -7,9 +7,10 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.DataContainer;
+import frc.robot.RobotContainer;
 
 public class PhotonSubsystem extends SubsystemBase {
 
@@ -36,18 +37,11 @@ public class PhotonSubsystem extends SubsystemBase {
             if (result.getMultiTagResult().estimatedPose.isPresent) {
                 Transform3d fieldToCamera = result.getMultiTagResult().estimatedPose.best;
                 photonPoseEstimator.setReferencePose(new Pose3d(fieldToCamera.getTranslation(), fieldToCamera.getRotation()));
+                DataContainer.camPose = photonPoseEstimator.getReferencePose();
+
+                RobotContainer.addVisionMeasurement(photonPoseEstimator.getReferencePose().toPose2d(), result.getTimestampSeconds());
             }
         }
 
-        SmartDashboard.putNumberArray("pose", new double[] {
-            getPose3d().toPose2d().getX(),
-            getPose3d().toPose2d().getY(),
-            getPose3d().toPose2d().getRotation().getDegrees()
-        });
     }
-
-    public Pose3d getPose3d() {
-        return photonPoseEstimator.getReferencePose() != null ?photonPoseEstimator.getReferencePose() : new Pose3d();
-    }
-
 }
