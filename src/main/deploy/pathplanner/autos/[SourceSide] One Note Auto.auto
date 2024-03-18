@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.81,
-      "y": 6.68093569679371
+      "x": 0.6908659160781844,
+      "y": 4.303428405079986
     },
-    "rotation": 60.0
+    "rotation": -60.246215720674975
   },
   "command": {
     "type": "sequential",
@@ -14,19 +14,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "11Path"
+            "pathName": "[SourceSide] First Shooting Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autoShootingAngle"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shooterStart"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "21Path"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "21ShootingPath"
+            "pathName": "Low Interference Path"
           }
         }
       ]

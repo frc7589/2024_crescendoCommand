@@ -67,11 +67,11 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_robotContainer.setAutoSettings();
-    
+
     CommandScheduler.getInstance().cancelAll();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    Pose2d startingPose = PathPlannerAuto.getStaringPoseFromAutoFile("Example Auto");
+    Pose2d startingPose = PathPlannerAuto.getStaringPoseFromAutoFile(m_robotContainer.getAutoName());
     m_robotContainer.setPose(startingPose);
     //m_robotContainer.resetFieldPositive();
 

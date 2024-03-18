@@ -41,24 +41,36 @@ public class IntakeSubsystem extends SubsystemBase {
         kTrasmitted("Tramsmitted", 132, 0, 255);
 
         private String name;
-        public int r, g, b;
+        private int red, green, blue;
 
         private Status(String name, int r, int g, int b) {
             this.name = name;
+            this.red = r;
+            this.green = g;
+            this.blue = b;
         }
 
         public String getName() {
             return this.name;
         }
+
+        public int getRed() {
+            return red;
+        }
+
+        public int getGreen() {
+            return green;
+        }
+
+        public int getBlue() {
+            return blue;
+        }
     }
 
     @Override
     public void periodic() {
-        if(hasNote()) {
-            status = Status.kTrasmitted;
-        } else {
-            status = Status.kEmpty;
-        }
+        if(hasNote()) status = Status.kTrasmitted;
+        else status = Status.kEmpty;
     }
 
     public static Status getStatus() {

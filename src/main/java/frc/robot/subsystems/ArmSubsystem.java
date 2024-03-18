@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.DataContainer;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -90,11 +91,10 @@ public class ArmSubsystem extends SubsystemBase {
     public void periodic() {
         this.updateSmartDashboard();
         if(RobotState.isDisabled()) return;
-        SmartDashboard.putNumberArray("arm_pos", DataContainer.pose2d != null ? new double[]{DataContainer.pose2d.getX(), DataContainer.pose2d.getY()} : new double[]{});
-        if(autoShooterAngle) setPosition(calculateAngle(DataContainer.getDistanceToSpeaker(DataContainer.pose2d.getX(), DataContainer.pose2d.getY())));
+        if(autoShooterAngle) setPosition(calculateAngle(DataContainer.getDistanceToSpeaker(RobotContainer.getPose().getX(), RobotContainer.getPose().getY())));
         
         double out = pidController.calculate(this.getPosistion());
-        m_leftMotor.set(out);
+        m_leftMotor.set(pidController.calculate(this.getPosistion()));
         m_rightMotor.set(out);
     }
 

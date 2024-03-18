@@ -21,6 +21,9 @@ public class ShooterSubsystem extends SubsystemBase {
         m_shooterLeft.setInverted(true);
         m_shooterRight.setInverted(true);
 
+        m_shooterLeft.enableVoltageCompensation(12);
+        m_shooterRight.enableVoltageCompensation(12);
+
         m_shooterLeftEncoder = m_shooterLeft.getEncoder();
         m_shooterRightEncoder = m_shooterRight.getEncoder();
 

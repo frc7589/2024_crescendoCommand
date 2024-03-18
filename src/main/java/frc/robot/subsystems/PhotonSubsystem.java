@@ -7,7 +7,6 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.DataContainer;
@@ -39,9 +38,10 @@ public class PhotonSubsystem extends SubsystemBase {
                 Transform3d fieldToCamera = result.getMultiTagResult().estimatedPose.best;
                 photonPoseEstimator.setReferencePose(new Pose3d(fieldToCamera.getTranslation(), fieldToCamera.getRotation()));
                 DataContainer.camPose = photonPoseEstimator.getReferencePose();
-            } else {
-                DataContainer.camPose = null;
+
+                RobotContainer.addVisionMeasurement(photonPoseEstimator.getReferencePose().toPose2d(), result.getTimestampSeconds());
             }
         }
+
     }
 }

@@ -36,28 +36,35 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Example Path"
+                  "pathName": "[Center] Inline Path"
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "shooterStart"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "intakeStart"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "autoShootingAngle"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "shooterStart"
+                      }
+                    }
+                  ]
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoShootingAngle"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shooterStart"
           }
         }
       ]
