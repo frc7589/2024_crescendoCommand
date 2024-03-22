@@ -37,7 +37,7 @@ import frc.robot.utils.OpzXboxController;
  */
 public class RobotContainer {
   private static final SwerveDriveSubsystem m_drive = new SwerveDriveSubsystem();
-  //private final LightSignalSubsystem m_light = new LightSignalSubsystem();
+  private final LightSignalSubsystem m_light = new LightSignalSubsystem();
   private static final ArmSubsystem m_arm = new ArmSubsystem();
   private static final IntakeSubsystem m_intake = new IntakeSubsystem();
   private static final ShooterSubsystem m_shooter = new ShooterSubsystem();
@@ -63,7 +63,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("shooterEnable", Commands.runOnce(()-> m_shooter.setOutput(0.3), m_shooter));
     NamedCommands.registerCommand("shooterDisable", Commands.runOnce(()-> m_shooter.setOutput(0), m_shooter));
     NamedCommands.registerCommand("shooterStart", new ShootingCommand(m_shooter, m_intake));
-    NamedCommands.registerCommand("intakeStart", new IntakeCommand(m_intake));
+    NamedCommands.registerCommand("intakeStart", new IntakeCommand(m_intake, false));
     NamedCommands.registerCommand("autoShootingAngle", new AutoShootingAngleCommand(m_arm));
 
 
@@ -121,13 +121,14 @@ public class RobotContainer {
 
     con_util.povUp().onTrue(m_arm.setPositionCommand(0.235));
     con_util.povLeft().onTrue(m_arm.setPositionCommand(0.045));
-    con_util.povDown().onTrue(m_arm.setPositionCommand(-0.02));
+    con_util.povDown().onTrue(m_arm.setPositionCommand(-0.01));
     con_util.povRight().onTrue(m_arm.toogleAutoShooter());
 
     con_util.a().whileTrue(m_shooter.shooterCommand(true));
     con_util.b().whileTrue(new ShootingCommand(m_shooter, m_intake));
     con_util.x().whileTrue(m_intake.intakeCommand(true));
-    con_util.y().whileTrue(new IntakeCommand(m_intake));
+    con_util.y().whileTrue(new IntakeCommand(m_intake, false));
+    con_util.y().and(con_util.rightBumper()).whileTrue(new IntakeCommand(m_intake, true));
   }
 
   /**

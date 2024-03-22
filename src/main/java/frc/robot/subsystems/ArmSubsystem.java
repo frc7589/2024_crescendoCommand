@@ -84,7 +84,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public double calculateAngle(double x) {
-        return (11.477*Math.log(x) + 16.666)/360;
+        return (11.2*Math.log(x) + 16.666)/360;//(11.477*Math.log(x) + 16.666)/360;
     }
 
     @Override

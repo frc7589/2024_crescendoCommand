@@ -31,7 +31,7 @@ public class Constants {
         public static final int kRightMotorID = 53;
         public static final int kEncoderID = 0;
 
-        public static double kEncoderOffset = 0.6135+0.081;//0.115;
+        public static double kEncoderOffset = 0.6135+0.081+0.1615;//0.115;
 
         public static double kMaxAngle = 0.4;
         public static double kMinAngle = 0;

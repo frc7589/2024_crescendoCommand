@@ -11,16 +11,18 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class IntakeCommand extends Command {
     private final IntakeSubsystem m_intake;
     private final Timer m_reverseTimer = new Timer();
+    private boolean overwrite;
 
-    public IntakeCommand(IntakeSubsystem m_intake) {
+    public IntakeCommand(IntakeSubsystem m_intake, boolean overwrite) {
         this.m_intake = m_intake;
+        this.overwrite = overwrite;
         addRequirements(m_intake);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        if(IntakeSubsystem.hasNote()) {
+        if(IntakeSubsystem.hasNote() && !overwrite) {
             this.cancel();
             return;
         }
@@ -30,7 +32,7 @@ public class IntakeCommand extends Command {
 
     @Override
     public void execute() {
-        if(IntakeSubsystem.hasNote()) {
+        if(IntakeSubsystem.hasNote() && !overwrite) {
             m_intake.setOutput(-0.15);
             m_reverseTimer.start();
         }
@@ -45,6 +47,6 @@ public class IntakeCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return m_reverseTimer.get() > 0.1 && IntakeSubsystem.hasNote();
+        return !overwrite ? m_reverseTimer.get() > 0.1 && IntakeSubsystem.hasNote() : false;
     }
 }
