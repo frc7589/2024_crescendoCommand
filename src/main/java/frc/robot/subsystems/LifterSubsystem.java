@@ -17,14 +17,11 @@ public class LifterSubsystem extends SubsystemBase{
         m_telescope = new CANSparkMax(LifterConstants.kMotorID, MotorType.kBrushless);
 
         m_encoder = m_telescope.getEncoder();
+
+        m_telescope.setInverted(true);
     }
 
     public void set(double output) {
         m_telescope.set(output*0.8);
     }
-
-    public void updateSmartDashboard() {
-        SmartDashboard.putNumber("Lifter Encoder", m_encoder.getPosition());
-    }
-
 }

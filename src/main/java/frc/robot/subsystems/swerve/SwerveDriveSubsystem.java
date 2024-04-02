@@ -7,6 +7,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -124,11 +125,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     public void drive(double xSpeed, double ySpeed, double zSpeed) {
         switch(this.mode) {
             case Field:
-                driveField(xSpeed, ySpeed, zSpeed);
+                driveField(xSpeed/Math.pow(0.6, Math.abs(xSpeed)-1), ySpeed/Math.pow(0.6, Math.abs(ySpeed)-1), zSpeed/Math.pow(0.3, Math.abs(zSpeed)-1));
                 break;
 
             case Robot:
-                driveChassis(xSpeed, ySpeed, zSpeed);
+                driveChassis(xSpeed/Math.pow(0.6, Math.abs(xSpeed)-1), ySpeed/Math.pow(0.6, Math.abs(ySpeed)-1), zSpeed/Math.pow(0.3, Math.abs(zSpeed)-1));
                 break;
         }
     }
@@ -143,11 +144,11 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     public void drive(double xSpeed, double ySpeed, double zSpeed, DriveMode mode) {
         switch(mode) {
             case Field:
-                driveField(xSpeed, ySpeed, zSpeed);
+                driveField(xSpeed/Math.pow(0.6, Math.abs(xSpeed)-1), ySpeed/Math.pow(0.6, Math.abs(ySpeed)-1), zSpeed/Math.pow(0.3, Math.abs(zSpeed)-1));
                 break;
 
             case Robot:
-                driveChassis(xSpeed, ySpeed, zSpeed);
+                driveChassis(xSpeed/Math.pow(0.6, Math.abs(xSpeed)-1), ySpeed/Math.pow(0.6, Math.abs(ySpeed)-1), zSpeed/Math.pow(0.3, Math.abs(zSpeed)-1));
                 break;
         }
     }
@@ -163,7 +164,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             ChassisSpeeds.fromFieldRelativeSpeeds(
                 xSpeed,
                 ySpeed,
-                zSpeed,//Math.pow(15, zSpeed-1),
+                zSpeed,
                 Rotation2d.fromDegrees(m_ahrs.getAngle()-headingOffset)
             )
         );

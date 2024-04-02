@@ -31,14 +31,14 @@ public class Constants {
         public static final int kRightMotorID = 53;
         public static final int kEncoderID = 0;
 
-        public static double kEncoderOffset = 0.6135+0.081+0.1615;//0.115;
+        public static double kEncoderOffset = 0.044;//0.115;
 
         public static double kMaxAngle = 0.4;
         public static double kMinAngle = 0;
 
         public static final double kP = 3.9545454545; //2.82;
-        public static final double kI = 0.06548727273;
-        public static final double kD = 0;
+        public static final double kI = 0.07284804219;
+        public static final double kD = 0.00000000000001;
 
         public static final double kInitialAngle = 62;
 
@@ -255,6 +255,6 @@ public class Constants {
         public static final int kUtilControllerID = 1;
 
         // Xbox控制器數值忽略基準值
-        public static final double kControllerMinValue = 0.1;
+        public static final double kControllerMinValue = 0.07;
     }
 }

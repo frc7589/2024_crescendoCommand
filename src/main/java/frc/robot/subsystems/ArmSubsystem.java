@@ -1,11 +1,15 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.ErrorCode;
+import com.ctre.phoenix.Logger;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,16 +24,18 @@ public class ArmSubsystem extends SubsystemBase {
         m_rightMotor = new CANSparkMax(ArmConstants.kRightMotorID, MotorType.kBrushless);
 
     private static final DutyCycleEncoder m_encoder = new DutyCycleEncoder(ArmConstants.kEncoderID);
+    //private static final Encoder m_relativeEncoder = new Encoder(ArmConstants.kEncoderA, ArmConstants.kEncoderB);
     
     private PIDController pidController;
     private boolean autoShooterAngle = false;
 
+    private double fuxkingOffset = 0;
+
     public ArmSubsystem() {
         m_encoder.setPositionOffset(ArmConstants.kEncoderOffset);
-
         pidController = new PIDController(ArmConstants.kP, ArmConstants.kI, ArmConstants.kD);
 
-        pidController.setTolerance(0.02);
+        pidController.setTolerance(0.005);
 
         m_leftMotor.restoreFactoryDefaults();
         m_rightMotor.restoreFactoryDefaults();
@@ -57,12 +63,13 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public double getPosistion() {
-        double v = -m_encoder.get();
-        return (v < -0.4 ? (1+(v%1)) : v%1);
+        double value = m_encoder.get(); // 反向
+        if(value > 0.5) value = 1-value;
+        return -value;
     }
 
     public void setPosition(double position) {
-        if(position > 0.5 || position < -0.1) return;
+        if(position > 0.5 || position < 0) return;
         else {
             pidController.setSetpoint(position);
         }
@@ -79,18 +86,26 @@ public class ArmSubsystem extends SubsystemBase {
         return pidController.getSetpoint();
     }
 
+    public Command resetZero() {
+        return runOnce(() -> fuxkingOffset = this.getPosistion());
+    }
+
     public double getHeight() {
         return ArmConstants.kInitialHeight+this.getAdditionHeight();
     }
 
     public double calculateAngle(double x) {
-        return (11.2*Math.log(x) + 16.666)/360;//(11.477*Math.log(x) + 16.666)/360;
+        return (18*Math.log(x) + 16.666)/360;//(11.477*Math.log(x) + 16.666)/360;
     }
 
     @Override
     public void periodic() {
         this.updateSmartDashboard();
         if(RobotState.isDisabled()) return;
+        if(!m_encoder.isConnected()) {
+            stopMotor();
+            return;
+        }
         if(autoShooterAngle) setPosition(calculateAngle(DataContainer.getDistanceToSpeaker(RobotContainer.getPose().getX(), RobotContainer.getPose().getY())));
         
         double out = pidController.calculate(this.getPosistion());
@@ -124,6 +139,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void updateSmartDashboard() {
+        System.out.println("Encoder Value: " + this.getPosistion());
         SmartDashboard.putNumber("[Arm] Current Height", ArmConstants.kInitialHeight+this.getAdditionHeight());
         SmartDashboard.putNumber("[Arm] Current Angle", this.getDegrees());
         SmartDashboard.putNumber("[Arm] Setpoint Angle", this.getSetpoint()*360);

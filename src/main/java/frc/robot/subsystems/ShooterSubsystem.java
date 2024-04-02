@@ -26,8 +26,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
         m_shooterLeftEncoder = m_shooterLeft.getEncoder();
         m_shooterRightEncoder = m_shooterRight.getEncoder();
-
-        SmartDashboard.putNumber("angle", 0);
     }
 
     @Override
