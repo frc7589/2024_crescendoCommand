@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,8 +21,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     private DutyCycleEncoder m_encoder;
     
     private PIDController pidController;
+
+    private XboxController controller;
     
     public ElevatorSubsystem() {
+        controller = new XboxController(0);
+
         m_leftMotor = new CANSparkMax(ElevatorConstants.kLeftMotorID, MotorType.kBrushless);
         m_rightMotor = new CANSparkMax(ElevatorConstants.kRightMotorID, MotorType.kBrushless);
 
@@ -48,9 +53,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         pidController.setSetpoint(0);
 
+        m_encoder.reset();
+
         SmartDashboard.putNumber("kP", 0);
         SmartDashboard.putNumber("kI", 0);
         SmartDashboard.putNumber("kD", 0);
+
+        SmartDashboard.putNumber("setpoint", 0);
 
         SmartDashboard.putNumber("ele", 0.0);
 
@@ -76,6 +85,37 @@ public class ElevatorSubsystem extends SubsystemBase {
             m_leftMotor.set(out);
             m_rightMotor.set(out);
         }
+
+        pidController.setPID(
+            SmartDashboard.getNumber("kP", 0),
+            SmartDashboard.getNumber("kI", 0),
+            SmartDashboard.getNumber("kD", 0)
+        );
+
+        if(m_encoder.getDistance() < 0.1 || m_encoder.getDistance() > 1.8) {
+            return;
+        }
+
+        double setpoint = SmartDashboard.getNumber("setpoint", 0);
+
+        if(setpoint > 1.95 || setpoint < 0) return;
+        
+        pidController.setSetpoint(setpoint);
+
+        m_leftMotor.set(pidController.calculate(m_encoder.getDistance(), setpoint));
+        m_rightMotor.set(pidController.calculate(m_encoder.getDistance(), setpoint));
+
+        if(controller.getLeftY() > 0.1) {
+            m_leftMotor.set(0.3);
+            m_rightMotor.set(0.3);
+        } else if(controller.getLeftY() < -0.1) {
+            m_leftMotor.set(-0.3);
+            m_rightMotor.set(-0.3);
+        } else {
+            m_leftMotor.set(0);
+            m_rightMotor.set(0);
+        }
+
     }
 
     public Command setPosision(double setpoint) {
