@@ -19,8 +19,32 @@ public class Constants {
 
     public static final Transform3d kRobotToCam = new Transform3d(new Translation3d(-0.4, 0.5, 0.0), new Rotation3d(0,0,0)); 
 
-    public static class LifterConstants {
-        public static final int kMotorID = 49;
+    public static class WristConstants {
+        public static final int kLeaderMotorID = 49;
+        public static final int kFollowerMotorID = 53;
+
+        public static final int kEncoderID = 2;
+
+        public static final double kEncoderOffset = 0.93;
+
+        public static final double kP = 3.4090909091;//3.04318181817//0.68181818181; //0.7090909091; //0.68181818181; //2.82;
+        public static final double kI = 0.04990909091; //0.010594584;//0.0108108;//0.005809090909;
+        public static final double kD = 0.0001; //0.225;
+    }
+
+    public static class ElevatorConstants {
+        public static final int kLeftMotorID = 43;
+        public static final int kRightMotorID = 46;
+        public static final int kEncoderID = 1;
+
+        public static final double kEncoderOffset = 0.0;
+
+        public static final double kP = 0;//5.09090909091;//11.2;//0.42;//0.94185;//0.68181818181; //0.7090909091; //0.68181818181; //2.82;
+        public static final double kI = 0; //0.05549090909;//0;//0.0005; //0.010594584;//0.0108108;//0.005809090909;
+        public static final double kD = 0;//0; //0.225;
+
+        // Ku = 1.5
+        // Tu = 64.0204865625 * 0.028116
     }
 
     /**
