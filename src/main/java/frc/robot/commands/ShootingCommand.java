@@ -1,9 +1,12 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.ConveyorConstants;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.WristSubsystem;
 
 public class ShootingCommand extends Command {
     private final ShooterSubsystem m_shooter;
@@ -22,22 +25,26 @@ public class ShootingCommand extends Command {
             this.cancel();
             return;
         }
-        m_shooter.setOutput(ConveyorConstants.kShooterOutput);
+        if(WristSubsystem.getSetpointPublic() == Constants.kSendingSetpoints[0] && ElevatorSubsystem.getSetpointPublic() == Constants.kSendingSetpoints[1]) {
+            m_shooter.setSetpoint(3600);
+        } else {
+            m_shooter.setSetpoint(ConveyorConstants.kShooterSpeed);
+        }
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if(m_shooter.getShooterSpeed()[0] > ConveyorConstants.kShooterSpeed) {
-            m_intake.setOutput(ConveyorConstants.kIntakeOutput);
+        if(m_shooter.atSetpoint() && Math.abs(m_shooter.getShooterSpeed()[0]-m_shooter.getSetpoint()) < 80) {
+            m_intake.setOutput(0.6);
         }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        m_shooter.setOutput(0);
-        m_intake.setOutput(0);
+        m_shooter.setSetpointCommand(0).schedule();
+        if(!interrupted) m_intake.setOutput(0);
     }
 
     // Returns true when the command should end.

@@ -36,6 +36,8 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     Pathfinding.setPathfinder(new LocalADStar());
+
+    m_robotContainer.setToDefault();
   }
 
   /**
@@ -94,6 +96,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    m_robotContainer.teleopInit();
   }
 
   /** This function is called periodically during operator control. */

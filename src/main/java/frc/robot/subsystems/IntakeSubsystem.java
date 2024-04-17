@@ -14,11 +14,11 @@ import frc.robot.Constants.ConveyorConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
     private static final CANSparkMax m_intake = new CANSparkMax(ConveyorConstants.kIntakeMotorID, MotorType.kBrushless);
-    private static final DigitalInput m_sensor = new DigitalInput(1);
+    private static final DigitalInput m_sensor = new DigitalInput(ConveyorConstants.kSensorPortID);
     private static Status status = Status.kEmpty;
 
     public IntakeSubsystem() {
-        m_intake.setInverted(true);
+        m_intake.setInverted(false);
     }
 
     public static enum Mode {
@@ -87,6 +87,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void setOutput(double output) {
         m_intake.set(output);
+    }
+
+    public double get() {
+        return m_intake.get();
     }
 
     public static boolean hasNote() {

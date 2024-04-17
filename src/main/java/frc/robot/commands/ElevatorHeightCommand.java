@@ -4,31 +4,35 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ConveyorConstants;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.WristSubsystem;
 
-public class ArmAngleCommand extends Command {
-    private final ArmSubsystem m_arm;
-    private final double angle;
+public class ElevatorHeightCommand extends Command {
+    private final ElevatorSubsystem m_elevator;
+    private final double height;
     private final Timer timer = new Timer();
+    private final double waitTime;
 
-    public ArmAngleCommand(ArmSubsystem m_arm, double angle) {
-        this.m_arm = m_arm;
-        this.angle = angle;
-        addRequirements(m_arm);
+    public ElevatorHeightCommand(ElevatorSubsystem m_elevator, double height, double waitTime) {
+        this.m_elevator = m_elevator;
+        this.height = height;
+        this.waitTime = waitTime;
+        
+        addRequirements(m_elevator);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         timer.reset();
-        m_arm.setAutoShooterAngle(false);
-        m_arm.setPosition(angle);
+        m_elevator.setPosision(height);
     }
 
     @Override
     public void execute() {
-        if(m_arm.onPoint()) {
+        if(m_elevator.onPoint()) {
             timer.start();
         }
     }
@@ -41,6 +45,6 @@ public class ArmAngleCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return timer.get() >= 0.8;
+        return timer.get() >= waitTime;
     }
 }

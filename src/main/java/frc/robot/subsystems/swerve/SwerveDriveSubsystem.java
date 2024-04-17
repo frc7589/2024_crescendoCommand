@@ -4,6 +4,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -13,13 +14,18 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.DataContainer;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.SwerveDriveConstants;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.WristSubsystem;
+import edu.wpi.first.wpilibj.DataLogManager;
 
 /** Swerve底盤 Class */
 public class SwerveDriveSubsystem extends SubsystemBase {
@@ -36,6 +42,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     private static SwerveDrivePoseEstimator poseEstimator;
 
     private double headingOffset = 0;
+    private static PIDController pid_zHeading;
 
     /** Swerve底盤 駕駛模式 */
     public static enum DriveMode {
@@ -69,6 +76,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     }
 
     public SwerveDriveSubsystem() {
+        m_ahrs.reset();
         mOdometry = new SwerveDriveOdometry(
             SwerveDriveConstants.kSwerveKinematics, 
             Rotation2d.fromDegrees(m_ahrs.getAngle()),
@@ -79,9 +87,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             SwerveDriveConstants.kSwerveKinematics,
             Rotation2d.fromDegrees(m_ahrs.getAngle()),
             getModulePositions(),
-            new Pose2d(),
-            VecBuilder.fill(0.3, 0.3, 0.8),
-            VecBuilder.fill(0.7, 0.7, 0.2)
+            new Pose2d(1.36, 5.552, new Rotation2d()),
+            VecBuilder.fill(1.0, 1.0, 1.0),
+            VecBuilder.fill(0.0, 0.0, 0.0)
         );
 
         AutoBuilder.configureHolonomic(
@@ -104,6 +112,8 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             },
             this
         );
+
+        pid_zHeading = new PIDController(headingOffset, maxOutput, headingOffset);
     }
 
     /**
@@ -164,7 +174,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             ChassisSpeeds.fromFieldRelativeSpeeds(
                 xSpeed,
                 ySpeed,
-                zSpeed,
+                -zSpeed,
                 Rotation2d.fromDegrees(m_ahrs.getAngle()-headingOffset)
             )
         );
@@ -183,7 +193,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             new ChassisSpeeds(
                 xSpeed,
                 ySpeed,
-                zSpeed
+                -zSpeed
             )
         );
 
@@ -316,9 +326,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         });
         
         SmartDashboard.putNumberArray("[Chassis] Posistion", new double[] {
-            DataContainer.pose2d.getX(),
-            DataContainer.pose2d.getY(),
-            DataContainer.pose2d.getRotation().getDegrees()
+            poseEstimator.getEstimatedPosition().getX(),
+            poseEstimator.getEstimatedPosition().getY(),
+            poseEstimator.getEstimatedPosition().getRotation().getDegrees()
         });
 
         SmartDashboard.putNumberArray("[IMU] Velocitys", new double[] {
@@ -388,5 +398,13 @@ public class SwerveDriveSubsystem extends SubsystemBase {
 
     public Pose2d getEstimatedPose() {
         return poseEstimator.getEstimatedPosition();
+    }
+
+    public static double getDistanceToSpeaker() {
+        return poseEstimator.getEstimatedPosition().getTranslation().getDistance(new Translation2d(0, 5.552));
+    }
+
+    public static Rotation2d getAngleToSpeaker() {
+        return poseEstimator.getEstimatedPosition().getTranslation().minus(new Translation2d(0, 5.552)).getAngle();
     }
 }
