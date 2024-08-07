@@ -23,7 +23,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private DigitalInput m_switch;
     
     private static PIDController pidController;
-    public static boolean notReseted = true;
+    public static boolean notReseted = true, firstCorrention = true;
     
     public ElevatorSubsystem() {
         notReseted = true;
@@ -70,10 +70,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if(m_switch.get()) {
-            m_encoder.reset();
-            if(notReseted) notReseted = false;
-        }
 
         SmartDashboard.putBoolean("switch", m_switch.get());
         SmartDashboard.putBoolean("notReseted", notReseted);
@@ -89,16 +85,33 @@ public class ElevatorSubsystem extends SubsystemBase {
         if(WristSubsystem.correctionMode && !notReseted) {
             setPosision(0);
         }
+        
         if(RobotState.isEnabled()) {
             if(notReseted) {
-                m_leftMotor.set(-0.3);
-                m_rightMotor.set(-0.3);
-            } else {
-                if(RobotState.isTeleop()) {
-                    double out = pidController.calculate(getPosistion());
-                    m_leftMotor.set(out);
-                    m_rightMotor.set(out);
+                if(firstCorrention) {
+                    if(m_switch.get()) {
+                        SmartDashboard.putString("elevator status", "going up");
+                        m_leftMotor.set(0.2);
+                        m_rightMotor.set(0.2);
+                    } else {
+                        firstCorrention = false;
+                    }
+                } else {
+                    if(m_switch.get()) {
+                        notReseted = false;
+                        m_encoder.reset();
+                        SmartDashboard.putString("elevator status", "corrected");
+                    } else {
+                        m_leftMotor.set(-0.45);
+                        m_rightMotor.set(-0.45);
+                        SmartDashboard.putString("elevator status", "correcting");
+                    }
                 }
+            } else {
+                SmartDashboard.putString("elevator status", "pid controlled");
+                double out = pidController.calculate(getPosistion());
+                m_leftMotor.set(out);
+                m_rightMotor.set(out);
             }
         }
     }

@@ -22,7 +22,7 @@ public class WristSubsystem extends SubsystemBase {
     
     private static PIDController pidController;
     private DigitalInput m_switch;
-    public static boolean correctionMode = true, firstCorrention = true;
+    public static boolean correctionMode = false, firstCorrention = false;
     private double lastPosistion;
 
     private static double correctedOffset = 0;
@@ -48,8 +48,8 @@ public class WristSubsystem extends SubsystemBase {
         m_leaderMotor.setInverted(true);
         m_followerMotor.setInverted(false);
 
-        m_leaderMotor.enableVoltageCompensation(Constants.kVoltageCompensation);
-        m_followerMotor.enableVoltageCompensation(Constants.kVoltageCompensation);
+        m_leaderMotor.enableVoltageCompensation(8);
+        m_followerMotor.enableVoltageCompensation(8);
 
         pidController.setSetpoint(0.21);
 
@@ -64,7 +64,7 @@ public class WristSubsystem extends SubsystemBase {
     public static double getPosistion() {
         double value = m_encoder.getAbsolutePosition()-WristConstants.kEncoderOffset-correctedOffset; // 反向
         if(value > 0.5) value = 1-value;
-        if(value < 0.1) value = 1+value;
+        if(value < -0.1) value = 1+value;
         return value;
     }
 
@@ -87,12 +87,13 @@ public class WristSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("wristSwitch", m_switch.get());
         SmartDashboard.putNumber("angle_predict", predictAngle(SwerveDriveSubsystem.getDistanceToSpeaker()));
 
-        if((Math.abs(getPosistion()-lastPosistion) > 0.1 || getPosistion() > 0.35) && !correctionMode && !firstCorrention) {
+        if((Math.abs(getPosistion()-lastPosistion) > 0.2 || getPosistion() > 0.35) && !correctionMode && !firstCorrention) {
             correctionMode = true;
             firstCorrention = true;
         }
 
         if(autoAngle) pidController.setSetpoint(predictAngle(SwerveDriveSubsystem.getDistanceToSpeaker()));
+        
         if(RobotState.isEnabled()) {
             if(!ElevatorSubsystem.notReseted) {
                 if(correctionMode) {
@@ -107,7 +108,7 @@ public class WristSubsystem extends SubsystemBase {
                         } else {
                             if(m_switch.get()) {
                                 correctionMode = false;
-                                correctedOffset = getPosistion()-0.008;
+                                correctedOffset = getPosistion()-0.01;
                                 SmartDashboard.putString("status", "corrected");
                             } else {
                                 m_leaderMotor.set(-0.1);

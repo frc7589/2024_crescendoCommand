@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -20,6 +22,7 @@ import frc.robot.Constants.XboxControllerConstants;
 import frc.robot.commands.ElevatorHeightCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ShootingCommand;
+import frc.robot.commands.WaitingResetCommand;
 import frc.robot.commands.WristAngleCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -47,7 +50,7 @@ public class RobotContainer {
   public static StringLogEntry myStringLog;
 
   private static final WristSubsystem m_wrist = new WristSubsystem();
-  private static final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+  //private static final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
 
   private static final OpzXboxController con_drive = new OpzXboxController(
     XboxControllerConstants.kDriveControllerID,
@@ -61,6 +64,7 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    //CameraServer.startAutomaticCapture();
 
     DataLogManager.start();
     myStringLog = new StringLogEntry(DataLogManager.getLog(), "/my/string");
@@ -89,10 +93,11 @@ public class RobotContainer {
       con_drive.getRightX()
     ), m_drive));
 
+    /* 
     m_elevator.setDefaultCommand(Commands.run(() -> {
-      if(RobotState.isTest()) m_elevator.test(con_util.getLeftY());
-      else m_elevator.setPosision(m_elevator.getSetpoint()-con_util.getLeftY()*0.005);
+      if(RobotState.isTeleop()) m_elevator.setPosision(m_elevator.getSetpoint()-con_util.getLeftY()*0.005);
     }, m_elevator));
+    */
 
     m_wrist.setDefaultCommand(Commands.run(() -> {
       m_wrist.setPosision(m_wrist.getSetpoint()-con_util.getRightY()*0.0005);
@@ -121,18 +126,18 @@ public class RobotContainer {
     con_drive.rightTrigger(0.5).onTrue(m_drive.setMaxOutputCommand(0.8));
 
     con_util.leftBumper().onTrue(Commands.parallel(
-      new WristAngleCommand(m_wrist, 0.18, 0),
-      new ElevatorHeightCommand(m_elevator, 0, 0)
+      new WristAngleCommand(m_wrist, 0.18, 0)
+      //new ElevatorHeightCommand(m_elevator, 0, 0)
     ));
 
     con_util.pov(0).onTrue(Commands.parallel(
-      new WristAngleCommand(m_wrist, 0.23, 0),
-      new ElevatorHeightCommand(m_elevator, 1.8, 0)
+      new WristAngleCommand(m_wrist, 0.23, 0)
+      //new ElevatorHeightCommand(m_elevator, 0.91, 0)
     ));
 
     con_util.pov(90).onTrue(Commands.parallel(
-      new WristAngleCommand(m_wrist, Constants.kSendingSetpoints[0], 0),
-      new ElevatorHeightCommand(m_elevator, Constants.kSendingSetpoints[1], 0)
+      new WristAngleCommand(m_wrist, Constants.kSendingSetpoints[0], 0)
+      //new ElevatorHeightCommand(m_elevator, Constants.kSendingSetpoints[1], 0)
     ));
 
     con_util.pov(180).onTrue(
@@ -141,14 +146,14 @@ public class RobotContainer {
           new WristAngleCommand(m_wrist, 0.08, 0.02),
           new WristAngleCommand(m_wrist, 0, 0)
         ),
-        new ElevatorHeightCommand(m_elevator, 0, 0),
+        //new ElevatorHeightCommand(m_elevator, 0, 0),
         new IntakeCommand(m_intake, false).onlyIf(() -> !IntakeSubsystem.hasNote())
       )
     );
     
     con_util.pov(270).onTrue(Commands.parallel(
-      new WristAngleCommand(m_wrist, 0.064, 0),
-      new ElevatorHeightCommand(m_elevator, 1.5, 0)
+      new WristAngleCommand(m_wrist, 0.0485, 0)
+      //new ElevatorHeightCommand(m_elevator, 1.5, 0)
     ));
 
     con_util.leftTrigger(0.4).onTrue(m_wrist.setAutoAngle(true));
@@ -173,14 +178,15 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // Create a path following command using AutoBuilder. This will also trigger event markers.
     return Commands.sequence(
+      new WaitingResetCommand(),
       Commands.parallel(
-        new WristAngleCommand(m_wrist, 0.064, 0.3),
-        new ElevatorHeightCommand(m_elevator, 1.5, 0)
+        //new ElevatorHeightCommand(m_elevator, 1.5, 0),
+        new WristAngleCommand(m_wrist, 0.075, 0.3)
       ),
       new ShootingCommand(m_shooter, m_intake),
       Commands.parallel(
-        new WristAngleCommand(m_wrist, 0.18, 0),
-        new ElevatorHeightCommand(m_elevator, 0, 0)
+        new WristAngleCommand(m_wrist, 0.18, 0)
+        //new ElevatorHeightCommand(m_elevator, 0, 0)
       )
     );
   }

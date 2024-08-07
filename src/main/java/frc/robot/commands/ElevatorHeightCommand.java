@@ -28,11 +28,13 @@ public class ElevatorHeightCommand extends Command {
     public void initialize() {
         timer.reset();
         m_elevator.setPosision(height);
+        
     }
 
     @Override
     public void execute() {
         if(m_elevator.onPoint()) {
+            //System.out.println("testlog");
             timer.start();
         }
     }

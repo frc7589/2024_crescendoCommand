@@ -25,12 +25,12 @@ public class Constants {
         public static final int kFollowerMotorID = 53;
 
         public static final int kEncoderID = 2;
-        public static final int kSwitchPortID = 4;
+        public static final int kSwitchPortID = 3;
 
         public static final double kEncoderOffset = 0.716;
 
-        public static final double kP = 2.1;//3.04318181817//0.68181818181; //0.7090909091; //0.68181818181; //2.82;
-        public static final double kI = 0.03111368832; //0.04990909091; //0.010594584;//0.0108108;//0.005809090909;
+        public static final double kP = 3.45;//3.04318181817//0.68181818181; //0.7090909091; //0.68181818181; //2.82;
+        public static final double kI = 0.12; //0.04990909091; //0.010594584;//0.0108108;//0.005809090909;
         public static final double kD = 0; //0.225;
     }
 
@@ -39,7 +39,7 @@ public class Constants {
         public static final int kRightMotorID = 46;
 
         public static final int kEncoderID = 1;
-        public static final int kSwitchPortID = 3;
+        public static final int kSwitchPortID = 4;
 
         public static final double kEncoderOffset = 0.0;
 
@@ -55,7 +55,7 @@ public class Constants {
      * Arm 配置常數
      */
     public static class ArmConstants {
-        public static final int kLeftMotorID = 48;
+        public static final int kLeftMotorID = 49;
         public static final int kRightMotorID = 53;
         public static final int kEncoderID = 0;
 
@@ -82,9 +82,9 @@ public class Constants {
      * Conveyor 配置常數
      */
     public static class ConveyorConstants {
-        public static final int kIntakeMotorID = 48;
+        public static final int kIntakeMotorID = 44;
         public static final int kShooterLeftMotorID = 50;
-        public static final int kShooterRightMotorID = 44;
+        public static final int kShooterRightMotorID = 48;
 
         public static final int kSensorPortID = 0;
 
