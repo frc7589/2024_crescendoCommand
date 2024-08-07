@@ -43,7 +43,8 @@ public class ShootingCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        m_shooter.setSetpointCommand(0).schedule();
+        System.out.println("end");
+        m_shooter.setSetpoint(0);
         if(!interrupted) m_intake.setOutput(0);
     }
 

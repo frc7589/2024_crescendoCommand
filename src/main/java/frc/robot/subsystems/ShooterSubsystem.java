@@ -73,7 +73,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public Command setSetpointCommand(double setpoint) {
-        return runOnce(() -> setSetpoint(setpoint));
+        return this.runOnce(() -> setSetpoint(setpoint));
     }
 
     public Command shooterReverseCommand() {

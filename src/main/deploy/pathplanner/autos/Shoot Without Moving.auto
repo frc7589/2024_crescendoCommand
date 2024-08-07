@@ -3,7 +3,7 @@
   "startingPose": {
     "position": {
       "x": 1.36,
-      "y": 5.5650661495532034
+      "y": 5.552
     },
     "rotation": 0
   },
@@ -14,13 +14,57 @@
         {
           "type": "named",
           "data": {
-            "name": "shootingAngle"
+            "name": "waiting reset"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "shooterStart"
+            "name": "shootingGroup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intakeReadyGroup"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake start"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "[Center] Inline Path"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "New Path"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "shootingGroup"
+                }
+              }
+            ]
           }
         }
       ]

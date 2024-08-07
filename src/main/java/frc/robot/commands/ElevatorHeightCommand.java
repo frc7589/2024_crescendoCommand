@@ -11,9 +11,10 @@ import frc.robot.subsystems.WristSubsystem;
 
 public class ElevatorHeightCommand extends Command {
     private final ElevatorSubsystem m_elevator;
-    private final double height;
+    private double height;
     private final Timer timer = new Timer();
-    private final double waitTime;
+    private double waitTime;
+    private boolean started = false;
 
     public ElevatorHeightCommand(ElevatorSubsystem m_elevator, double height, double waitTime) {
         this.m_elevator = m_elevator;
@@ -27,21 +28,25 @@ public class ElevatorHeightCommand extends Command {
     @Override
     public void initialize() {
         timer.reset();
+        this.started = false;
         m_elevator.setPosision(height);
-        
     }
 
     @Override
     public void execute() {
         if(m_elevator.onPoint()) {
-            //System.out.println("testlog");
-            timer.start();
+            if(!started) {
+                System.out.println("onPoint" + height);
+                timer.start();
+                this.started = true;
+            }
         }
     }
 
     @Override
     public void end(boolean interrupted) {
         timer.stop();
+        System.out.println("end height" + height);
     }
 
     // Returns true when the command should end.

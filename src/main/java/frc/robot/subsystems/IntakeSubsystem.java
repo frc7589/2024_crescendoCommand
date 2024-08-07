@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -7,6 +9,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,6 +22,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public IntakeSubsystem() {
         m_intake.setInverted(false);
+
+        SmartDashboard.putBoolean("hasNote", m_sensor.get());
     }
 
     public static enum Mode {
@@ -71,6 +76,8 @@ public class IntakeSubsystem extends SubsystemBase {
     public void periodic() {
         if(hasNote()) status = Status.kTrasmitted;
         else status = Status.kEmpty;
+
+        SmartDashboard.putBoolean("hasNote", hasNote());
     }
 
     public static Status getStatus() {

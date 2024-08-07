@@ -2,6 +2,7 @@ package frc.robot.subsystems.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerTrajectory;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -17,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -41,8 +43,10 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     private double maxOutput = SwerveDriveConstants.kDefaultSpeed;
     private static SwerveDrivePoseEstimator poseEstimator;
 
+
     private double headingOffset = 0;
     private static PIDController pid_zHeading;
+    private static Field2d field2d = new Field2d();
 
     /** Swerve底盤 駕駛模式 */
     public static enum DriveMode {
@@ -92,6 +96,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             VecBuilder.fill(0.0, 0.0, 0.0)
         );
 
+
         AutoBuilder.configureHolonomic(
             this::getPose,
             this::setPose,
@@ -103,15 +108,16 @@ public class SwerveDriveSubsystem extends SubsystemBase {
               // This will flip the path being followed to the red side of the field.
               // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
+              //var alliance = DriverStation.getAlliance();
+              //if (alliance.isPresent()) {
+             //   return alliance.get() == DriverStation.Alliance.Red;
+             // }
 
               return false;
             },
             this
         );
+        
 
         pid_zHeading = new PIDController(headingOffset, maxOutput, headingOffset);
     }
@@ -330,6 +336,14 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             poseEstimator.getEstimatedPosition().getY(),
             poseEstimator.getEstimatedPosition().getRotation().getDegrees()
         });
+
+        SmartDashboard.putNumber("X", poseEstimator.getEstimatedPosition().getX() - 1.36);
+        SmartDashboard.putNumber("Y", poseEstimator.getEstimatedPosition().getY() - 5.552);
+        SmartDashboard.putNumber("Z", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+
+        field2d.setRobotPose(poseEstimator.getEstimatedPosition());
+
+        SmartDashboard.putData(field2d);
 
         SmartDashboard.putNumberArray("[IMU] Velocitys", new double[] {
             m_ahrs.getVelocityX(),

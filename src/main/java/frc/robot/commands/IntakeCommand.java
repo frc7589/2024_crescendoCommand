@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ConveyorConstants;
@@ -30,23 +31,29 @@ public class IntakeCommand extends Command {
             return;
         }
         m_reverseTimer.reset();
-        m_intake.setOutput(ConveyorConstants.kIntakeOutput);
+        m_intake.setOutput(0.4); //ConveyorConstants.kIntakeOutput);
     }
 
     @Override
     public void execute() {
         if(IntakeSubsystem.hasNote() && !overwrite) {
             m_intake.setOutput(-0.15);
+            System.out.println("hasNote");
             m_reverseTimer.start();
         }
     }
 
     @Override
     public void end(boolean interrupted) {
+        System.out.println("get");
         m_reverseTimer.stop();
-        if(!interrupted && !isStarted) new WristAngleCommand(RobotContainer.getWristSubsystem(), 0.21, 0).schedule();
+        if(!interrupted && !isStarted) {
+            RobotContainer.getWristSubsystem().setPosision(0.18);
+            RobotContainer.getShooterSubsystem().setSetpoint(ConveyorConstants.kShooterSpeed*0.5);
+        }
         m_intake.setOutput(0);
     }
+    
 
     // Returns true when the command should end.
     @Override
@@ -54,3 +61,4 @@ public class IntakeCommand extends Command {
         return !overwrite ? m_reverseTimer.get() > 0.1 && IntakeSubsystem.hasNote() : false;
     }
 }
+

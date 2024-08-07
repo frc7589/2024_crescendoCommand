@@ -45,11 +45,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         m_leftMotor.restoreFactoryDefaults();
         m_rightMotor.restoreFactoryDefaults();
 
-        m_leftMotor.setIdleMode(IdleMode.kBrake);
-        m_rightMotor.setIdleMode(IdleMode.kBrake);
+        m_leftMotor.setIdleMode(IdleMode.kCoast);
+        m_rightMotor.setIdleMode(IdleMode.kCoast);
 
-        m_leftMotor.setInverted(true);
-        m_rightMotor.setInverted(false);
+        m_leftMotor.setInverted(false);
+        m_rightMotor.setInverted(true);
 
         m_leftMotor.enableVoltageCompensation(Constants.kVoltageCompensation);
         m_rightMotor.enableVoltageCompensation(Constants.kVoltageCompensation);
@@ -60,7 +60,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         SmartDashboard.putNumber("setpoint", 0);
 
-        SmartDashboard.putBoolean("reset", false);
+        SmartDashboard.putBoolean("E_reset", false);
     }
 
     public static double getPosistion() {
@@ -72,17 +72,17 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void periodic() {
 
         SmartDashboard.putBoolean("switch", m_switch.get());
-        SmartDashboard.putBoolean("notReseted", notReseted);
+        SmartDashboard.putBoolean("E_notReseted", notReseted);
 
-        if(SmartDashboard.getBoolean("reset", false)) {
+        if(SmartDashboard.getBoolean("E_reset", false)) {
             m_encoder.reset();
-            SmartDashboard.putBoolean("reset", false);
+            SmartDashboard.putBoolean("E_reset", false);
         }
 
         SmartDashboard.putNumber("length", getPosistion());
         SmartDashboard.putBoolean("conn", m_encoder.isConnected());
 
-        if(WristSubsystem.correctionMode && !notReseted) {
+        if(WristSubsystem.correctionMode && notReseted) {
             setPosision(0);
         }
         
@@ -102,8 +102,8 @@ public class ElevatorSubsystem extends SubsystemBase {
                         m_encoder.reset();
                         SmartDashboard.putString("elevator status", "corrected");
                     } else {
-                        m_leftMotor.set(-0.45);
-                        m_rightMotor.set(-0.45);
+                        m_leftMotor.set(-0.55);
+                        m_rightMotor.set(-0.55);
                         SmartDashboard.putString("elevator status", "correcting");
                     }
                 }

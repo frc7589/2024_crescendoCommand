@@ -27,11 +27,17 @@ public class Constants {
         public static final int kEncoderID = 2;
         public static final int kSwitchPortID = 3;
 
-        public static final double kEncoderOffset = 0.716;
+        public static final double kEncoderOffset = 0;
 
-        public static final double kP = 3.45;//3.04318181817//0.68181818181; //0.7090909091; //0.68181818181; //2.82;
-        public static final double kI = 0.12; //0.04990909091; //0.010594584;//0.0108108;//0.005809090909;
-        public static final double kD = 0; //0.225;
+        public static final double kP = 3.4664;//3.04318181817//0.68181818181; //0.7090909091; //0.68181818181; //2.82;
+        public static final double kI = 0.19; //0.04990909091; //0.010594584;//0.0108108;//0.005809090909;
+        public static final double kD = 0.00001; //0.225;
+
+        public static final double[] autoShootingParams = {
+            -0.04009017,
+            0.1949337,
+            -0.11883266
+        };
     }
 
     public static class ElevatorConstants {
@@ -41,7 +47,7 @@ public class Constants {
         public static final int kEncoderID = 1;
         public static final int kSwitchPortID = 4;
 
-        public static final double kEncoderOffset = 0.0;
+        public static final double kEncoderOffset = 0.1659;
 
         public static final double kP = 4.2727272727;//5.09090909091;//11.2;//0.42;//0.94185;//0.68181818181; //0.7090909091; //0.68181818181; //2.82;
         public static final double kI = 0.05383636364; //0.05549090909;//0;//0.0005; //0.010594584;//0.0108108;//0.005809090909;
@@ -82,7 +88,7 @@ public class Constants {
      * Conveyor 配置常數
      */
     public static class ConveyorConstants {
-        public static final int kIntakeMotorID = 44;
+        public static final int kIntakeMotorID = 30;
         public static final int kShooterLeftMotorID = 50;
         public static final int kShooterRightMotorID = 48;
 
@@ -91,7 +97,7 @@ public class Constants {
         public static final double kShooterOutput = 0.62;
         public static final double kIntakeOutput = 0.4;
 
-        public static final double kShooterSpeed = 3400;
+        public static final double kShooterSpeed = 3600;
         public static final double kShooterRadius = 5.08; // unit: centimeter
 
         public static final double kMinIntakePausepoint = 76;
@@ -169,11 +175,11 @@ public class Constants {
         /**
          * 移動PID參數配置
          */
-        public static final double kPath_kP = 8;//0.0095; //0.0085277;//0.008338;
+        public static final double kPath_kP = 7.5;//0.0095; //0.0085277;//0.008338;
         public static final double kPath_kI = 0;//0.00048; //0.000552; //0.0004545;
-        public static final double kPath_kD = 0; //0.000011;
+        public static final double kPath_kD = 0.00001; //0.000011;
 
-        public static final double kPathZ_kP = 1;//0.0095; //0.0085277;//0.008338;
+        public static final double kPathZ_kP = 0;//0.0095; //0.0085277;//0.008338;
         public static final double kPathZ_kI = 0;//0.00048; //0.000552; //0.0004545;
         public static final double kPathZ_kD = 0; //0.000011;
 
