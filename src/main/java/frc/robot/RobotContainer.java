@@ -15,6 +15,7 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotState;
@@ -51,7 +52,7 @@ import frc.robot.utils.OpzXboxController;
  */
 public class RobotContainer {
   private static final SwerveDriveSubsystem m_drive = new SwerveDriveSubsystem();
-  private final LightSignalSubsystem m_light = new LightSignalSubsystem();
+  //private final LightSignalSubsystem m_light = new LightSignalSubsystem();
   private static final IntakeSubsystem m_intake = new IntakeSubsystem();
   private static final ShooterSubsystem m_shooter = new ShooterSubsystem();
   //private static final PhotonSubsystem photonSubsystem = new PhotonSubsystem();
@@ -163,12 +164,14 @@ public class RobotContainer {
     con_drive.leftTrigger(0.5).onTrue(m_drive.setMaxOutputCommand(0.5));
     con_drive.rightTrigger(0.5).onTrue(m_drive.setMaxOutputCommand(0.8));
 
+    con_drive.back().onTrue(m_drive.setPoseCommand(new Pose2d(1.1, 5.552, new Rotation2d())));
+
     con_util.leftBumper().onTrue(Commands.parallel(
       new WristAngleCommand(m_wrist, 0.18, 0.01),
       new ElevatorHeightCommand(m_elevator, 0, 0.01)
     ));
 
-    con_util.pov(0).onTrue( Commands.parallel( 
+    con_util.pov(0).onTrue(Commands.parallel( 
       new WristAngleCommand(m_wrist, 0.24, 0.01),
       new ElevatorHeightCommand(m_elevator, 0.91, 0.01)
     ));
@@ -199,13 +202,14 @@ public class RobotContainer {
 
     con_util.leftTrigger(0.4).onTrue(m_wrist.setAutoAngle(true));
     con_util.rightTrigger(0.4).onTrue(m_wrist.setAutoAngle(false));
-    con_util.back().onTrue(m_shooter.setSetpointCommand(0));
+    con_util.back().onTrue(m_wrist.setPosisionCommand(0));
     con_util.start().onTrue(Commands.runOnce(() -> {
       SmartDashboard.putNumberArray("dataPoint", new double[] {
         SwerveDriveSubsystem.getDistanceToSpeaker(),
         WristSubsystem.getPosistion()
       });
-    }, m_shooter).ignoringDisable(true));
+    }, m_shooter).ignoringDisable(
+      true));
     con_util.a().whileTrue(m_shooter.shooterReverseCommand());
     con_util.b().whileTrue(new ShootingCommand(m_shooter, m_intake));
     con_util.x().whileTrue(m_intake.intakeCommand(true));

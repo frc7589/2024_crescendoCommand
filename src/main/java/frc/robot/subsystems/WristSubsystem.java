@@ -62,7 +62,8 @@ public class WristSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("a", WristConstants.autoShootingParams[0]);
         SmartDashboard.putNumber("b", WristConstants.autoShootingParams[1]);
         SmartDashboard.putNumber("c", WristConstants.autoShootingParams[2]);
-
+        SmartDashboard.putNumber("d", WristConstants.autoShootingParams[3]);
+        SmartDashboard.putNumber("e", WristConstants.autoShootingParams[4]);
         SmartDashboard.putData(pidController);
     }
 
@@ -83,9 +84,11 @@ public class WristSubsystem extends SubsystemBase {
         return (
             SmartDashboard.getNumber(
                 "a",
-                WristConstants.autoShootingParams[0])*Math.pow(distance, 2)+
-            SmartDashboard.getNumber("b", WristConstants.autoShootingParams[1])*distance+
-            SmartDashboard.getNumber("c", WristConstants.autoShootingParams[2])
+                WristConstants.autoShootingParams[0])*Math.pow(distance, 4)+
+            SmartDashboard.getNumber("b", WristConstants.autoShootingParams[1])*Math.pow(distance, 3)+
+            SmartDashboard.getNumber("c", WristConstants.autoShootingParams[2])*Math.pow(distance, 2)+
+            SmartDashboard.getNumber("d", WristConstants.autoShootingParams[3])*distance+
+            SmartDashboard.getNumber("e", WristConstants.autoShootingParams[4])
         );
         //}
         // return SmartDashboard.getNumber("a", 0.0488)*Math.log(distance) + SmartDashboard.getNumber("k", 0.057);
@@ -117,7 +120,7 @@ public class WristSubsystem extends SubsystemBase {
             SmartDashboard.putNumberArray("lastError", new Double[]{getPosistion(), getCorrectedPosistion()});
         }
 
-        if(autoAngle) pidController.setSetpoint(predictAngle(SwerveDriveSubsystem.getDistanceToSpeaker()));
+        if(autoAngle) setPosision(predictAngle(SwerveDriveSubsystem.getDistanceToSpeaker()));
         
         if(RobotState.isEnabled()) {
             if(!ElevatorSubsystem.notReseted) {

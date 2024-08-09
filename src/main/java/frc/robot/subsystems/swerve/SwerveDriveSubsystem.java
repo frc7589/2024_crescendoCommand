@@ -337,9 +337,6 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             poseEstimator.getEstimatedPosition().getRotation().getDegrees()
         });
 
-        SmartDashboard.putNumber("X", poseEstimator.getEstimatedPosition().getX() - 1.36);
-        SmartDashboard.putNumber("Y", poseEstimator.getEstimatedPosition().getY() - 5.552);
-        SmartDashboard.putNumber("Z", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
 
         field2d.setRobotPose(poseEstimator.getEstimatedPosition());
 
@@ -360,6 +357,12 @@ public class SwerveDriveSubsystem extends SubsystemBase {
     public Command setMaxOutputCommand(double value) {
         return runOnce(() -> {
             this.maxOutput = value;
+        });
+    }
+
+    public Command setPoseCommand(Pose2d pose) {
+        return runOnce(() -> {
+            setPose(pose);;
         });
     }
 
@@ -414,11 +417,20 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         return poseEstimator.getEstimatedPosition();
     }
 
+    private static Translation2d getSpeakerPoint() {
+        SmartDashboard.putBoolean("Blue Allience", true);
+        if (SmartDashboard.getBoolean("Blue Allience", true)) {
+            return new Translation2d(0, 5.552);
+        } else {
+            return new Translation2d(16.48, 5.552);
+        }
+    }
+
     public static double getDistanceToSpeaker() {
-        return poseEstimator.getEstimatedPosition().getTranslation().getDistance(new Translation2d(0, 5.552));
+        return poseEstimator.getEstimatedPosition().getTranslation().getDistance(getSpeakerPoint());
     }
 
     public static Rotation2d getAngleToSpeaker() {
-        return poseEstimator.getEstimatedPosition().getTranslation().minus(new Translation2d(0, 5.552)).getAngle();
+        return poseEstimator.getEstimatedPosition().getTranslation().minus(getSpeakerPoint()).getAngle();
     }
 }

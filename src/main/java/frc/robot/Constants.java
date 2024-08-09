@@ -34,9 +34,11 @@ public class Constants {
         public static final double kD = 0.00001; //0.225;
 
         public static final double[] autoShootingParams = {
-            -0.03256438,
-            0.1706356,
-            -0.10760732
+            -0.0023592
+            ,0.03090918 
+            ,-0.15049922  
+            ,0.33758368 
+            ,-0.18353936
         };
     }
 

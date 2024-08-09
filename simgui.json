@@ -1,0 +1,23 @@
+{
+  "HALProvider": {
+    "Other Devices": {
+      "CANCoder (v6)[3]": {
+        "header": {
+          "open": true
+        }
+      }
+    }
+  },
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/PIDController[7]": "PIDController",
+      "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/shooterPID": "PIDController"
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  }
+}

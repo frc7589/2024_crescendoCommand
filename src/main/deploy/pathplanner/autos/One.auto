@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.36,
+      "y": 5.552
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "waiting reset"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootingGroup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "saftyGroup"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
