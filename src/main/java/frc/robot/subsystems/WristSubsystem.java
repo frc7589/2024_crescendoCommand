@@ -67,6 +67,10 @@ public class WristSubsystem extends SubsystemBase {
         SmartDashboard.putData(pidController);
     }
 
+    public static double getAbsolutePosition() {
+        return m_encoder.getAbsolutePosition();
+    }
+
     public static double getPosistion() {
         double value = m_encoder.getAbsolutePosition()-WristConstants.kEncoderOffset-correctedOffset; // 反向
         if(value > 0.5) value = 1-value;
@@ -111,6 +115,7 @@ public class WristSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("angle_predict", predictAngle(SwerveDriveSubsystem.getDistanceToSpeaker()));
         SmartDashboard.putBoolean("W_firstCorrention", firstCorrention);
         SmartDashboard.putBoolean("W_correctionMode", correctionMode);
+        SmartDashboard.putNumber("Wrist Absolute Position", getAbsolutePosition());
 
         SmartDashboard.putBoolean("autoAngle", autoAngle);
 
