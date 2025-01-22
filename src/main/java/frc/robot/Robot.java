@@ -10,6 +10,7 @@ import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -42,6 +43,7 @@ public class Robot extends TimedRobot {
     Pathfinding.setPathfinder(new LocalADStar());
 
     m_robotContainer.setToDefault();
+
   }
 
   /**
@@ -61,6 +63,8 @@ public class Robot extends TimedRobot {
 
     //m_light.setColor(255, 0, 0);
   }
+
+
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
@@ -98,7 +102,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    m_robotContainer.teleopInit();
+    //m_robotContainer.teleopInit();
   }
 
   /** This function is called periodically during operator control. */

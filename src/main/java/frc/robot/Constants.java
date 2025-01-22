@@ -189,7 +189,7 @@ public class Constants {
          * 最大速度與最大加速度
          */
         public static final double kMaxVelocityMetersPerSecond = 5.0;
-        public static final double kMaxAccelerationMetersPerSecond = 3.0;
+        public static final double kMaxAccelerationMetersPerSecond = 2.0;
 
 
         public static final HolonomicPathFollowerConfig kPPConfig = 

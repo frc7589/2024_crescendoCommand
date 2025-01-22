@@ -61,4 +61,3 @@ public class IntakeCommand extends Command {
         return !overwrite ? m_reverseTimer.get() > 0.1 && IntakeSubsystem.hasNote() : false;
     }
 }
-

@@ -26,6 +26,9 @@ public class SwerveModule {
 
     private PIDController pid_rotor;
 
+    private boolean swerve_rotor = true;
+
+    
     /**
      * Swerve模組
      * @param config Swerve模組配置
@@ -44,6 +47,11 @@ public class SwerveModule {
                 .withMagnetOffset(config.getRotorAngleOffset())
                 .withSensorDirection(SwerveDriveConstants.kRotorEncoderDirection)
         );
+
+        m_rotor.setSmartCurrentLimit(25);
+        m_rotor.setSecondaryCurrentLimit(35);
+        m_throttle.setSmartCurrentLimit(35);
+
 
         m_throttle.setInverted(SwerveDriveConstants.kThrottleMotorInversion);
         m_rotor.setInverted(SwerveDriveConstants.kRotorMotorInversion);
@@ -78,6 +86,14 @@ public class SwerveModule {
      */
     public CANSparkMax getRotorMotor() {
         return m_rotor;
+    }
+
+    public double getThrottleVoltage() {
+        return m_throttle.getBusVoltage();
+    }
+
+    public double getRotorVoltage() {
+        return m_rotor.getBusVoltage();
     }
 
     /**

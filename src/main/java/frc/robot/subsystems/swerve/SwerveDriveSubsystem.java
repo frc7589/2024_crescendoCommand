@@ -199,7 +199,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
             new ChassisSpeeds(
                 xSpeed,
                 ySpeed,
-                -zSpeed
+                -zSpeed 
             )
         );
 
@@ -351,6 +351,26 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         SmartDashboard.putNumberArray("[IMU] Accels", new double[] {
             m_ahrs.getWorldLinearAccelX(),
             m_ahrs.getWorldLinearAccelY()
+        });
+
+        SmartDashboard.putNumberArray("FL_Voltage", new double[] {
+            m_frontLeft.getRotorVoltage(),
+            m_frontLeft.getThrottleVoltage()
+        });
+
+        SmartDashboard.putNumberArray("FR_Voltage", new double[] {
+            m_frontRight.getRotorVoltage(),
+            m_frontRight.getThrottleVoltage()
+        });
+
+        SmartDashboard.putNumberArray("RL_Voltage", new double[] {
+            m_rearLeft.getRotorVoltage(),
+            m_rearLeft.getThrottleVoltage()
+        });
+
+        SmartDashboard.putNumberArray("RR_Voltage", new double[] {
+            m_rearRight.getRotorVoltage(),
+            m_rearRight.getThrottleVoltage()
         });
     }
 

@@ -15,7 +15,7 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation2d; 
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotState;
@@ -55,7 +55,7 @@ public class RobotContainer {
   //private final LightSignalSubsystem m_light = new LightSignalSubsystem();
   private static final IntakeSubsystem m_intake = new IntakeSubsystem();
   private static final ShooterSubsystem m_shooter = new ShooterSubsystem();
-  //private static final PhotonSubsystem photonSubsystem = new PhotonSubsystem();
+  private static final PhotonSubsystem photonSubsystem = new PhotonSubsystem();
   private final SendableChooser<Command> m_autoChooser;
 
   public static StringLogEntry myStringLog;
@@ -77,6 +77,7 @@ public class RobotContainer {
   public RobotContainer() {
     //CameraServer.startAutomaticCapture();
 
+    
     DataLogManager.start();
     myStringLog = new StringLogEntry(DataLogManager.getLog(), "/my/string");
 
@@ -106,6 +107,7 @@ public class RobotContainer {
       new WristAngleCommand(m_wrist, 0, 0.01),
       new ElevatorHeightCommand(m_elevator, 0, 0.01)
     ));
+  
     
     m_autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData(m_autoChooser);
@@ -125,8 +127,9 @@ public class RobotContainer {
         );
       }
     }, m_drive));
+    
 
-    ///* 
+    
     m_elevator.setDefaultCommand(Commands.run(() -> {
       if(!RobotState.isAutonomous()) m_elevator.setPosision(m_elevator.getSetpoint()-con_util.getLeftY()*0.005);
     }, m_elevator));
@@ -135,7 +138,7 @@ public class RobotContainer {
     m_wrist.setDefaultCommand(Commands.run(() -> {
       if(!RobotState.isAutonomous()) m_wrist.setPosision(m_wrist.getSetpoint()-con_util.getRightY()*0.0005);
     }, m_wrist));
-    //*/
+
 
     SmartDashboard.putNumberArray("dataPoint", new double[] {
       SwerveDriveSubsystem.getDistanceToSpeaker(),
@@ -166,6 +169,7 @@ public class RobotContainer {
 
     con_drive.back().onTrue(m_drive.setPoseCommand(new Pose2d(1.1, 5.552, new Rotation2d())));
 
+    
     con_util.leftBumper().onTrue(Commands.parallel(
       new WristAngleCommand(m_wrist, 0.18, 0.01),
       new ElevatorHeightCommand(m_elevator, 0, 0.01)
@@ -175,13 +179,13 @@ public class RobotContainer {
       new WristAngleCommand(m_wrist, 0.24, 0.01),
       new ElevatorHeightCommand(m_elevator, 0.91, 0.01)
     ));
-
+    
 
     con_util.pov(90).onTrue(Commands.parallel(
       new WristAngleCommand(m_wrist, Constants.kSendingSetpoints[0], 0),
       new ElevatorHeightCommand(m_elevator, Constants.kSendingSetpoints[1], 0)
     ));
-
+  
     con_util.pov(180).onTrue(
       Commands.parallel(
         Commands.sequence(
@@ -193,6 +197,7 @@ public class RobotContainer {
         new IntakeCommand(m_intake, false).onlyIf(() -> !IntakeSubsystem.hasNote())
       )
     );
+    
     
     con_util.pov(270).onTrue(Commands.sequence(
       m_wrist.setAutoAngle(true).onlyIf(() -> !con_util.getHID().getStartButton() && RobotState.isTeleop()),
@@ -215,8 +220,11 @@ public class RobotContainer {
     con_util.x().whileTrue(m_intake.intakeCommand(true));
     con_util.y().whileTrue(new IntakeCommand(m_intake, false));
     con_util.y().and(con_util.rightBumper()).whileTrue(new IntakeCommand(m_intake, true));
+  
+    
   }
-
+  
+  
   public static WristSubsystem getWristSubsystem() {
     return m_wrist;
   }
@@ -224,6 +232,7 @@ public class RobotContainer {
   public static ShooterSubsystem getShooterSubsystem() {
     return m_shooter;
   }
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -301,6 +310,7 @@ public class RobotContainer {
     m_drive.setPose(pose);
   }
 
+  
   public void teleopInit() {
     new WristAngleCommand(m_wrist, 0.18, 0.03).schedule();
     m_shooter.setSetpointCommand(0).schedule();
@@ -327,4 +337,5 @@ public class RobotContainer {
     //return m_drive.getEstimatedPose();
   }
 }
+
 
